@@ -1,0 +1,7 @@
+data/
+outputs/
+*.tif
+*.part
+__pycache__/
+machine_report.txt
+.ipynb_checkpoints/

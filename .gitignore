@@ -1,0 +1,119 @@
+# .gitignore for the Alaknanda FYP repository
+# Lives at 04 Code\.gitignore and git is initialised in 04 Code.
+#
+# The rule: this repository holds source. Data and outputs stay on disk.
+# 05 Data and 06 Outputs are tens of gigabytes and Sen1Floods11 alone is 32 GB.
+#
+# A large file committed once stays in the history even after you delete it,
+# so check `git status` before the first commit and stop if anything below
+# appears in it.
+
+# ---------------------------------------------------------------------------
+# Data and outputs. These sit outside 04 Code, but the patterns are here in
+# case git is ever initialised at the project root instead.
+# ---------------------------------------------------------------------------
+05 Data/
+06 Outputs/
+99 Archive/
+02 Literature/
+
+# ---------------------------------------------------------------------------
+# Everything the pipeline writes inside 04 Code
+# ---------------------------------------------------------------------------
+FYP_code/data/
+FYP_code/outputs/
+FYP_code/machine_report.txt
+
+# ---------------------------------------------------------------------------
+# Rasters, vectors and archives, anywhere
+# ---------------------------------------------------------------------------
+*.tif
+*.tiff
+*.img
+*.vrt
+*.gpkg
+*.gpkg-shm
+*.gpkg-wal
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.sbn
+*.sbx
+*.qix
+*.kmz
+*.kml
+*.geojson
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# corridor.geojson is the one vector that IS source. Keep it.
+!FYP_code/data/corridor.geojson
+
+# ---------------------------------------------------------------------------
+# Configuration with local absolute paths and credentials
+# ---------------------------------------------------------------------------
+# .env carries machine-specific absolute paths. .env.example is committed
+# in its place and is what somebody else would copy.
+.env
+*.env
+!.env.example
+!*.env.example
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+build/
+dist/
+venv/
+.venv/
+
+# ---------------------------------------------------------------------------
+# QGIS
+# ---------------------------------------------------------------------------
+*.qgz
+*.qgs
+*.qgs~
+*.qgz~
+
+# ---------------------------------------------------------------------------
+# Documents. The repository is code; the writing lives in 03 Writing and
+# goes to people as files, not through git.
+# ---------------------------------------------------------------------------
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.xlsx
+*.xls
+*.pdf
+
+# ---------------------------------------------------------------------------
+# Windows and editors
+# ---------------------------------------------------------------------------
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
+
+# ---------------------------------------------------------------------------
+# Large model weights and checkpoints, if the DL work ever lands here
+# ---------------------------------------------------------------------------
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.h5
+document_builders/

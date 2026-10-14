@@ -1,0 +1,294 @@
+{#- Jal-SAR flood bulletin. Every sentence of the bulletin is in this one file,
+    so a Hindi version can be added later as a second template.
+    The header colour is dark maroon. -#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jal-SAR flood bulletin, {{ b.event.date_long }}</title>
+<style>
+:root{--ink:#1a2332;--muted:#5b6570;--line:#d7dce2;--bg:#f5f6f8;--card:#ffffff;--head:{{ b.c.maroon }};
+ --high:{{ b.c.trust[3] }};--med:{{ b.c.trust[2] }};--low:{{ b.c.trust[1] }};--blind:{{ b.c.trust[0] }}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Georgia,'Times New Roman',serif}
+.wrap{max-width:1060px;margin:0 auto;padding:0 18px 40px}
+header.rpt{background:var(--head);color:#fff;padding:22px 0 18px}
+header.rpt .wrap{padding-bottom:0}
+.word{font:bold 34px/1 Georgia,serif;letter-spacing:.6px}
+.kind{font:13px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:1.6px;opacity:.85;margin-top:6px}
+header.rpt h1{font:normal 24px/1.25 Georgia,serif;margin:12px 0 6px}
+.meta{font:12.5px/1.5 Arial,Helvetica,sans-serif;opacity:.9}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:20px 0}
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--head);padding:12px 14px}
+.card .k{font:11px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.card .n{font:bold 26px/1.2 Arial,Helvetica,sans-serif;margin-top:4px}
+.card .s{font:12px Arial,Helvetica,sans-serif;color:var(--muted)}
+.summary{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--head);padding:14px 18px;font-size:16.5px}
+.summary p{margin:.4em 0}
+h2,h3{break-after:avoid}
+h2{font:bold 21px Georgia,serif;color:var(--head);border-bottom:2px solid var(--head);padding-bottom:4px;margin:30px 0 12px}
+h3{font:bold 15px Arial,Helvetica,sans-serif;margin:18px 0 6px}
+p.note,.note{font:12.5px/1.5 Arial,Helvetica,sans-serif;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font:13px/1.4 Arial,Helvetica,sans-serif;background:#fff}
+th{background:#e9edf2;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:#fafbfc}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+tr.head-row td{font-weight:bold}
+details{background:#fff;border:1px solid var(--line);margin:10px 0;padding:0 14px}
+details>summary{cursor:pointer;font:bold 14px Arial,Helvetica,sans-serif;padding:10px 0;color:var(--head)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
+.mapbox{background:#fff;border:1px solid var(--line);padding:8px;position:relative}
+svg.gjmap{width:100%;height:auto;display:block;background:#eef0f2;touch-action:none;cursor:grab}
+svg.gjmap.drag{cursor:grabbing}
+.mapctl{position:absolute;top:16px;left:16px;display:flex;flex-direction:column;gap:4px}
+.mapctl button{width:30px;height:30px;font:bold 16px Arial;border:1px solid var(--line);background:#fff;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:12.5px Arial,Helvetica,sans-serif;margin:8px 2px 0}
+.sw{display:inline-block;width:13px;height:13px;vertical-align:-2px;margin-right:5px;border:1px solid rgba(0,0,0,.25)}
+.insets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+@media (max-width:700px){.insets{grid-template-columns:1fr}}
+.inset{background:#fff;border:1px solid var(--line);padding:6px}
+.inset svg{width:100%;height:auto;display:block;background:#eef0f2}
+.inset .cap{font:12px Arial,Helvetica,sans-serif;margin-top:4px}
+.tools{display:flex;gap:10px;align-items:center;margin:6px 0;font:13px Arial,Helvetica,sans-serif}
+.tools input{flex:1;max-width:320px;padding:5px 8px;border:1px solid var(--line);font:13px Arial}
+.pager{display:flex;gap:6px;align-items:center;margin:8px 0;font:13px Arial,Helvetica,sans-serif}
+.pager button{padding:4px 10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.pager button[disabled]{opacity:.4;cursor:default}
+.tag{display:inline-block;padding:1px 6px;font:bold 11px Arial;color:#fff;border-radius:2px}
+.limits li{margin:.35em 0}
+footer.rpt{font:12px Arial,Helvetica,sans-serif;color:var(--muted);border-top:1px solid var(--line);margin-top:30px;padding-top:10px}
+.pb{}
+{% if b.print_mode %}
+@page{size:A4;margin:13mm 12mm 17mm 12mm}
+body{background:#fff;font-size:12.5px}
+.wrap{max-width:none;padding:0}
+header.rpt{padding:14px 12px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+header.rpt .wrap{padding:0}
+.summary{font-size:13.5px}
+.card .n{font-size:20px}
+.cards{grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+h2{font-size:17px;margin-top:18px}
+table{font-size:11px}
+.pb{break-before:page}
+tr,.card,.inset,.mapbox{break-inside:avoid}
+.mapctl,.tools,.pager{display:none}
+* {-webkit-print-color-adjust:exact;print-color-adjust:exact}
+{% endif %}
+</style>
+</head>
+<body>
+<header class="rpt"><div class="wrap">
+  <div class="word">Jal-SAR</div>
+  <div class="kind">Flood bulletin, Alaknanda corridor (Rudraprayag to Rishikesh)</div>
+  <h1>{{ b.event.label or "Sentinel-1 pass" }}: {{ b.event.date_long }}</h1>
+  <div class="meta">
+    Radar: Sentinel-1, relative orbit {{ b.event.orbit }}, {{ b.event.orbit_pass|lower }} pass{% if b.event.scene_time_utc %}, acquired {{ b.event.scene_time_utc }} UTC{% endif %}.
+    {% if b.event.scene_id %}Scene {{ b.event.scene_id }}.{% endif %}<br>
+    Made {{ b.made }} with Jal-SAR {{ b.version }}. Headline model: {{ b.head.name }}.
+  </div>
+</div></header>
+
+<div class="wrap">
+
+<div class="cards">
+  <div class="card"><div class="k">Mapped flood area</div><div class="n">{{ b.fmt.area_total }} km&sup2;</div>
+    <div class="s">outside the river's usual channel</div></div>
+  <div class="card" style="border-top-color:var(--high)"><div class="k">High-trust share</div><div class="n">{{ b.fmt.high_pct }}</div>
+    <div class="s">{{ b.fmt.area_high }} km&sup2; on terrain graded high</div></div>
+  <div class="card"><div class="k">Villages touching the flood</div><div class="n">{{ b.fmt.n_villages }}</div>
+    <div class="s">population {{ b.fmt.population }} (Census 2011){% if b.fmt.n_villages_min != "n/a" %};
+    {{ b.fmt.n_villages_min }} with at least {{ b.fmt.min_ha }} ha of flood (population {{ b.fmt.population_min }}){% endif %}</div></div>
+  <div class="card"><div class="k">Road length in the flood</div><div class="n">{{ b.fmt.road_km }}</div>
+    <div class="s">{% if b.roads %}km of OpenStreetMap roads{% else %}roads not available{% endif %}</div></div>
+</div>
+
+<div class="summary">
+  <p>Sentinel-1 radar passed over the corridor on {{ b.event.date_long }}. The {{ b.head.name }} model maps
+  <b>{{ b.fmt.area_total }} km&sup2;</b> of flood water outside the river's usual channel.
+  Of that, {{ b.fmt.area_high }} km&sup2; is on terrain where trust in the map is high,
+  {{ b.fmt.area_med }} km&sup2; medium and {{ b.fmt.area_low }} km&sup2; low.</p>
+  {% if b.villages %}<p>{{ b.fmt.n_villages }} village{{ "s have" if b.villages.count != 1 else " has" }} part of their area inside the mapped flood. Together they had {{ b.fmt.population }} people in {{ b.fmt.households }} households at the 2011 Census{% if b.villages.without_census_figure %} ({{ b.villages.without_census_figure }} of them have no census figure){% endif %}.{% if b.fmt.n_villages_min != "n/a" %} {{ b.fmt.n_villages_min }} of them have at least {{ b.fmt.min_ha }} ha ({{ b.fmt.min_km2 }} km&sup2;) of mapped flood, with {{ b.fmt.population_min }} people.{% endif %} Population is for the whole village, not for the people inside the mapped flood.</p>{% endif %}
+  {% if b.roads %}<p>{{ b.fmt.road_km }} km of mapped roads lie inside the mapped flood{% if b.roads.top_named %}, most on {{ b.roads.top_named[0].name }} ({{ "%.2f"|format(b.roads.top_named[0].flood_km) }} km){% endif %}.</p>{% endif %}
+  <p>{{ b.fmt.blind }} km&sup2; of the corridor is radar blind on this pass (slopes in layover or shadow); no flood can be mapped there.</p>
+  {% if b.validation %}<p>For this event the map was checked against hand-drawn reference maps of {{ b.validation.year }}: F1 {{ b.fmt.f1_a }} for the model trained on Sen1Floods11 (Table A) and {{ b.fmt.f1_d }} when trained on the corridor itself (Table D). An F1 of 1 would be a perfect match.</p>
+  {% else %}<p>There is no reference map for this date, so this map has not been checked directly. On the two checked events (2021 and 2023) the {{ b.head.name }} model scored F1 {{ b.fmt.f1_mean_d }} on average (Table D).</p>{% endif %}
+</div>
+
+<h2 class="pb">Map</h2>
+<div class="mapbox">
+  <svg class="gjmap" id="gjmap" viewBox="0 0 {{ b.map.w }} {{ b.map.h }}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    {% if b.map.hillshade %}<image href="{{ b.map.hillshade }}" x="0" y="0" width="{{ b.map.w }}" height="{{ b.map.h }}" preserveAspectRatio="none" opacity="0.9"/>{% endif %}
+    <image class="lyr-blind" href="{{ b.map.blind }}" x="0" y="0" width="{{ b.map.w }}" height="{{ b.map.h }}" preserveAspectRatio="none" style="image-rendering:pixelated"/>
+    {% if b.map.corridor %}<path d="M0,0 H{{ b.map.w }} V{{ b.map.h }} H0 Z {{ b.map.corridor }}" fill="#ffffff" fill-opacity="0.55" fill-rule="evenodd"/>{% endif %}
+    <path d="{{ b.map.corridor }}" fill="none" stroke="{{ b.c.maroon }}" stroke-width="{{ b.map.stroke }}" stroke-dasharray="{{ b.map.stroke * 4 }} {{ b.map.stroke * 3 }}"/>
+    <image class="lyr-flood" href="{{ b.map.flood }}" x="0" y="0" width="{{ b.map.w }}" height="{{ b.map.h }}" preserveAspectRatio="none" style="image-rendering:pixelated"/>
+    <g class="lyr-spots">
+    {% for s in b.map.spots %}<circle cx="{{ s.x }}" cy="{{ s.y }}" r="{{ s.r }}" fill="{{ s.col }}" fill-opacity="0.35" stroke="{{ s.col }}" stroke-width="{{ b.map.stroke * 0.6 }}"><title>{{ "%.3f"|format(s.km2) }} km² of mapped flood in this 1 km square, {{ s.trust }} trust for most of it</title></circle>
+    {% endfor %}</g>
+    {% if b.map.split_x is not none %}<line x1="{{ b.map.split_x }}" y1="0" x2="{{ b.map.split_x }}" y2="{{ b.map.h }}" stroke="#374151" stroke-width="{{ b.map.stroke * 0.8 }}" stroke-dasharray="{{ b.map.stroke * 2 }} {{ b.map.stroke * 2 }}"/>
+    <text x="{{ b.map.split_x + b.map.stroke * 4 }}" y="{{ b.map.font * 1.4 }}" font-family="Arial" font-size="{{ b.map.font }}" fill="#374151">Gorge above Devprayag &#8594;</text>
+    <text x="{{ b.map.split_x - b.map.stroke * 4 }}" y="{{ b.map.font * 1.4 }}" font-family="Arial" font-size="{{ b.map.font }}" fill="#374151" text-anchor="end">&#8592; Open valley below Devprayag</text>{% endif %}
+    <g class="lyr-villages">
+    {% for v in b.map.villages %}<circle cx="{{ v.x }}" cy="{{ v.y }}" r="{{ v.r }}" fill="#fff" fill-opacity="0.85" stroke="{{ b.c.maroon }}" stroke-width="{{ b.map.stroke * 0.7 }}"><title>{{ v.name }} ({{ v.sub }}): {{ v.flood }} km&sup2; of mapped flood, {{ v.share }} of the whole village area; population {{ v.pop }} (Census 2011)</title></circle>
+    {% endfor %}</g>
+    {% for i in b.map.insets %}<rect x="{{ i.x }}" y="{{ i.y }}" width="{{ i.w }}" height="{{ i.h }}" fill="none" stroke="#111827" stroke-width="{{ b.map.stroke }}"/>
+    <text x="{{ i.x + i.w / 2 }}" y="{{ i.y - b.map.stroke * 3 }}" font-family="Arial" font-weight="bold" font-size="{{ b.map.font * 1.2 }}" text-anchor="middle" fill="#111827">{{ i.key }}</text>{% endfor %}
+    <g transform="translate({{ b.map.w - b.map.font * 2.5 }},{{ b.map.h - b.map.font * 5 }})">
+      <path d="M0,{{ -b.map.font * 2 }} L{{ b.map.font * 0.7 }},0 L0,{{ -b.map.font * 0.6 }} L{{ -b.map.font * 0.7 }},0 Z" fill="#111827"/>
+      <text x="0" y="{{ b.map.font * 1.2 }}" font-family="Arial" font-size="{{ b.map.font }}" text-anchor="middle" fill="#111827">N</text></g>
+    <g transform="translate({{ b.map.font * 2 }},{{ b.map.h - b.map.font * 2 }})">
+      <rect x="0" y="0" width="{{ b.map.scale_px }}" height="{{ b.map.stroke * 2 }}" fill="#111827"/>
+      <text x="{{ b.map.scale_px / 2 }}" y="{{ -b.map.stroke * 3 }}" font-family="Arial" font-size="{{ b.map.font }}" text-anchor="middle" fill="#111827">{{ b.map.scale_km }} km</text></g>
+  </svg>
+  <div class="mapctl"><button type="button" onclick="gjZoom(1.6)" title="zoom in">+</button>
+    <button type="button" onclick="gjZoom(1/1.6)" title="zoom out">&minus;</button>
+    <button type="button" onclick="gjReset()" title="whole corridor">&#8634;</button></div>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--high)"></span>flood, high trust</span>
+    <span><span class="sw" style="background:var(--med)"></span>flood, medium trust</span>
+    <span><span class="sw" style="background:var(--low)"></span>flood, low trust</span>
+    <span><span class="sw" style="background:var(--blind);opacity:.55"></span>radar blind</span>
+    <span><span class="sw" style="background:#fff;border-color:{{ b.c.maroon }};border-radius:50%"></span>village touching the flood</span>
+    <span><span class="sw" style="border:2px dashed {{ b.c.maroon }};background:none"></span>corridor</span>
+  </div>
+  <p class="note">The flood map is drawn at its full 10 m detail; zoom in to see it (mouse wheel, drag, or the buttons).
+  At the whole-corridor view the circles mark each 1 km square with mapped flood, sized by its area. Hillshade from the Copernicus GLO-30 DEM.</p>
+</div>
+{% if b.insets %}
+<h3>Where the most flood is mapped</h3>
+<div class="insets">
+{% for i in b.insets %}<div class="inset">
+  <svg viewBox="0 0 {{ i.w }} {{ i.h }}" xmlns="http://www.w3.org/2000/svg">
+    {% if i.hillshade %}<image href="{{ i.hillshade }}" x="0" y="0" width="{{ i.w }}" height="{{ i.h }}" preserveAspectRatio="none"/>{% endif %}
+    <image href="{{ i.blind }}" x="0" y="0" width="{{ i.w }}" height="{{ i.h }}" preserveAspectRatio="none" style="image-rendering:pixelated"/>
+    <image href="{{ i.flood }}" x="0" y="0" width="{{ i.w }}" height="{{ i.h }}" preserveAspectRatio="none" style="image-rendering:pixelated"/>
+    <rect x="{{ i.w * 0.05 }}" y="{{ i.h * 0.93 }}" width="{{ 100 }}" height="{{ i.h * 0.012 }}" fill="#111827"/>
+    <text x="{{ i.w * 0.05 }}" y="{{ i.h * 0.9 }}" font-family="Arial" font-size="{{ i.h * 0.045 }}" fill="#111827">1 km</text>
+  </svg>
+  <div class="cap"><b>{{ i.key }}</b>: {{ i.caption }}</div>
+</div>{% endfor %}
+</div>{% endif %}
+
+<h2>Flood area by reach and trust</h2>
+<table>
+  <thead><tr><th>Reach</th><th class="r">High trust (km&sup2;)</th><th class="r">Medium (km&sup2;)</th><th class="r">Low (km&sup2;)</th><th class="r">Total (km&sup2;)</th></tr></thead>
+  <tbody>
+  {% for r in b.reach_rows %}<tr{% if r.total_row %} class="head-row"{% endif %}><td>{{ r.name }}</td><td class="r">{{ r.high }}</td><td class="r">{{ r.med }}</td><td class="r">{{ r.low }}</td><td class="r">{{ r.total }}</td></tr>
+  {% endfor %}</tbody>
+</table>
+<p class="note">Trust grades: {% for k in [3, 2, 1, 0] %}<b>{{ b.trust_plain[k].split(": ")[0] }}</b>: {{ b.trust_plain[k].split(": ", 1)[1] }}{{ "; " if not loop.last else "." }}{% endfor %}</p>
+
+<h2>Where the models agree</h2>
+<table>
+  <thead><tr><th>Models calling a cell flood</th><th class="r">Area (km&sup2;)</th></tr></thead>
+  <tbody>{% for r in b.agree_rows %}<tr><td>{{ r.label }}</td><td class="r">{{ r.km2 }}</td></tr>{% endfor %}</tbody>
+</table>
+<table style="margin-top:10px">
+  <thead><tr><th>Model</th><th>Training set</th><th class="r">Threshold</th><th class="r">Flood area (km&sup2;)</th><th class="r">Removed as permanent water (km&sup2;)</th><th class="r">Removed as radar blind (km&sup2;)</th></tr></thead>
+  <tbody>{% for f in b.family_rows %}<tr{% if f.headline %} class="head-row"{% endif %}><td>{{ f.name }}{% if f.headline %} (headline){% endif %}</td><td>{{ f.trainset }}</td><td class="r">{{ f.threshold }}</td><td class="r">{{ f.flood }}</td><td class="r">{{ f.perm }}</td><td class="r">{{ f.distort }}</td></tr>{% endfor %}</tbody>
+</table>
+<p class="note">A cell called flood by every model is the most dependable part of the map. Areas called flood by one model only are worth checking on the ground before acting on them.</p>
+
+<h2 class="pb">Villages</h2>
+{% if b.villages and b.villages.villages %}
+<p class="note">Villages whose area includes mapped flood, largest flood area first. "Share in flood" is the mapped flood as a share of the whole village area. "Inside or touching the mapped flood" does not mean damaged. Households and population are from the 2011 Census (Survey of India village boundaries); a village without a census figure says so, and is never counted as zero.</p>
+<div class="tools"><label for="vq">Search</label><input id="vq" type="search" placeholder="village, block or district" oninput="gjPage('vt',0)"><span id="vt-count"></span></div>
+<table id="vt">
+  <thead><tr><th>Village</th><th>Sub-district</th><th>District</th><th class="r">Households (2011)</th><th class="r">Population (2011)</th><th class="r">Share in flood</th><th class="r">Flood (km&sup2;)</th><th class="r">of it high trust</th></tr></thead>
+  <tbody>{% for v in b.villages.villages %}<tr><td>{{ v.village }}</td><td>{{ v.subdistrict }}</td><td>{{ v.district }}</td><td class="r">{{ "{:,}".format(v.households_2011) if v.households_2011 is not none else "no census figure" }}</td><td class="r">{{ "{:,}".format(v.population_2011) if v.population_2011 is not none else "no census figure" }}</td><td class="r">{% if v.share_flooded is not none %}{{ "%.1f"|format(v.share_flooded * 100) }} %{% else %}n/a{% endif %}</td><td class="r">{{ "%.3f"|format(v.flood_km2) }}</td><td class="r">{{ "%.3f"|format(v.flood_high_trust_km2) }}</td></tr>
+  {% endfor %}</tbody>
+</table>
+<div class="pager" id="vt-pager"><button type="button" onclick="gjPage('vt',-1)">Previous</button><span id="vt-page"></span><button type="button" onclick="gjPage('vt',1)">Next</button></div>
+{% elif b.villages %}<p>No village polygon contains mapped flood.</p>
+{% else %}<p>The village layer (VILLAGES_corridor.gpkg) was not found, so this section is empty.</p>{% endif %}
+
+<h2>Roads</h2>
+{% if b.roads %}
+<table>
+  <thead><tr><th>Road class (OpenStreetMap)</th><th class="r">Length in the mapped flood (km)</th><th class="r">Length in the corridor (km)</th></tr></thead>
+  <tbody>{% for r in b.road_rows %}<tr><td>{{ r.cls }}</td><td class="r">{{ r.flood }}</td><td class="r">{{ r.total }}</td></tr>{% endfor %}</tbody>
+</table>
+{% if b.roads.top_named %}<h3>Named roads with the most length in the flood</h3>
+<table><thead><tr><th>Road</th><th>Class</th><th class="r">Length in the flood (km)</th></tr></thead>
+<tbody>{% for r in b.roads.top_named[:10] %}<tr><td>{{ r.name }}</td><td>{{ r.class }}</td><td class="r">{{ "%.3f"|format(r.flood_km) }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+<p class="note">Roads &copy; OpenStreetMap contributors (ODbL). A road counts as in the flood where its centre line crosses a flood cell; bridges and raised roads may be counted although they stayed dry.</p>
+{% else %}<p>Roads not available (run <code>python jalsar.py roads</code> once with the internet on).</p>{% endif %}
+
+<h2 class="pb">How far the map has been checked</h2>
+{% if b.validation %}
+<p>The {{ b.validation.year }} event has hand-drawn reference maps in {{ b.n_windows }} windows along the corridor. Each model's map was scored against them with the project's scorer. F1 combines how much of the real flood was found (recall) and how much of the mapped flood was real (precision); the brackets give the 95 % interval from resampling the windows.</p>
+<table>
+  <thead><tr><th>Model</th><th>Table</th><th>Reach</th><th class="r">F1 (95 % interval)</th><th class="r">Precision</th><th class="r">Recall</th></tr></thead>
+  <tbody>{% for r in b.val_rows %}<tr{% if r.headline and r.reach == "Both reaches" %} class="head-row"{% endif %}><td>{{ r.model }}</td><td>{{ r.table }}</td><td>{{ r.reach }}</td><td class="r">{{ r.f1 }}</td><td class="r">{{ r.p }}</td><td class="r">{{ r.r }}</td></tr>{% endfor %}</tbody>
+</table>
+<p class="note">Table A: the model trained on Sen1Floods11 (floods worldwide) and applied here unchanged. Table D: the model trained on the corridor's own reference windows, each window held out in turn, so no window is scored by a model that saw it.</p>
+{% else %}
+<p>There is no reference map for this date. The accuracy below was measured on the two events that do have one (Table D, pooled over both reaches); it describes the method, not this map.</p>
+<table>
+  <thead><tr><th>Model</th><th class="r">F1, 2021</th><th class="r">F1, 2023</th><th class="r">Mean</th></tr></thead>
+  <tbody>{% for r in b.score_rows %}<tr{% if r.headline %} class="head-row"{% endif %}><td>{{ r.name }}</td><td class="r">{{ r.f2021 }}</td><td class="r">{{ r.f2023 }}</td><td class="r">{{ r.mean }}</td></tr>{% endfor %}</tbody>
+</table>
+{% endif %}
+
+<h2>How this map is made, and its limits</h2>
+<details{% if b.print_mode %} open{% endif %}><summary>What this bulletin is not</summary>
+<ul class="limits">{% for a, t in b.not_this %}<li><b>{{ a }}</b> {{ t }}</li>{% endfor %}</ul>
+</details>
+<details{% if b.print_mode %} open{% endif %}><summary>The models and the headline rule</summary>
+<p>Three kinds of model map every event: a Random Forest, a U-Net and TerraMind-small (a pretrained Earth observation model, fine-tuned here). Each is the version trained on the hand-labelled Sen1Floods11 chips only; for TerraMind, of its two versions (radar only, or radar with terrain), the one that scored higher on Sen1Floods11's validation chips. Water within the permanent-water mask and cells in radar layover or shadow are removed from every map.</p>
+<p>The headline map comes from the model with the highest pooled Table D F1 on GRD radar, averaged over 2021 and 2023; if the runner-up is not distinguishable from it (the paired interval includes zero), the faster model is used. For this bulletin: {{ b.head.rule }}.</p>
+</details>
+<details{% if b.print_mode %} open{% endif %}><summary>The trust layer</summary>
+<p>Every cell has an incidence-angle class, a height-above-nearest-drainage (HAND) class and a valley-width class. For each class, Table D measured how often the headline model's flood calls were right (precision), averaged over 2021 and 2023. A cell's trust is the lowest of its three precisions: high at 0.40 or more, medium from 0.20, low below 0.20. A class with fewer than 100 reference flood pixels counts as low, because there is too little evidence. The rule was fixed on 8 October 2026, before the networks' Table D results existed. It rests on {{ b.trust_basis }}.</p>
+<table><thead><tr><th>Terrain property</th><th>Class</th><th class="r">Precision (Table D)</th><th>Grade</th></tr></thead>
+<tbody>{% for r in b.trust_rows %}<tr><td>{{ r.dim }}</td><td>{{ r.cls }}</td><td class="r">{{ r.p }}</td><td><span class="tag" style="background:{{ r.col }}">{{ r.grade }}</span></td></tr>{% endfor %}</tbody></table>
+</details>
+<details{% if b.print_mode %} open{% endif %}><summary>Sources and files</summary>
+<p class="note">{{ b.credits }}</p>
+<p class="note">Files for this event, in 06 Outputs\jalsar\{{ b.event.id }}\: {{ b.files|join(", ") }}.</p>
+{% if b.event.strata_note %}<p class="note">Terrain strata: {{ b.event.strata_note }}</p>{% endif %}
+</details>
+
+<footer class="rpt">{{ b.footer }}. Jal-SAR {{ b.version }}, bulletin made {{ b.made }}.</footer>
+</div>
+
+{% if not b.print_mode %}
+<script>
+(function(){
+  var svg=document.getElementById('gjmap'); if(!svg) return;
+  var W={{ b.map.w }},H={{ b.map.h }},vb=[0,0,W,H],drag=null;
+  function set(){svg.setAttribute('viewBox',vb.join(' '));
+    var z=W/vb[2]; var s=svg.querySelector('.lyr-spots'); if(s) s.style.display=z>5?'none':'';}
+  function pt(e){var r=svg.getBoundingClientRect();
+    return [vb[0]+(e.clientX-r.left)/r.width*vb[2], vb[1]+(e.clientY-r.top)/r.height*vb[3]];}
+  window.gjZoom=function(f,c){c=c||[vb[0]+vb[2]/2,vb[1]+vb[3]/2];
+    var w=Math.min(W,Math.max(W/200,vb[2]/f)),h=w*H/W;
+    vb=[c[0]-(c[0]-vb[0])*w/vb[2], c[1]-(c[1]-vb[1])*h/vb[3], w, h]; set();};
+  window.gjReset=function(){vb=[0,0,W,H];set();};
+  svg.addEventListener('wheel',function(e){e.preventDefault();gjZoom(e.deltaY<0?1.25:0.8,pt(e));},{passive:false});
+  svg.addEventListener('pointerdown',function(e){drag=pt(e);svg.classList.add('drag');svg.setPointerCapture(e.pointerId);});
+  svg.addEventListener('pointermove',function(e){if(!drag)return;var p=pt(e);vb[0]-=p[0]-drag[0];vb[1]-=p[1]-drag[1];set();});
+  svg.addEventListener('pointerup',function(){drag=null;svg.classList.remove('drag');});
+})();
+var gjState={};
+function gjPage(id,step){
+  var per=25,t=document.getElementById(id); if(!t) return;
+  var q=(document.getElementById('vq')||{value:''}).value.toLowerCase();
+  var rows=[].slice.call(t.tBodies[0].rows);
+  var hit=rows.filter(function(r){return !q||r.textContent.toLowerCase().indexOf(q)>=0;});
+  var pages=Math.max(1,Math.ceil(hit.length/per));
+  var p=step===0?0:Math.min(pages-1,Math.max(0,(gjState[id]||0)+step)); gjState[id]=p;
+  rows.forEach(function(r){r.style.display='none';});
+  hit.slice(p*per,p*per+per).forEach(function(r){r.style.display='';});
+  document.getElementById(id+'-page').textContent='page '+(p+1)+' of '+pages;
+  document.getElementById(id+'-count').textContent=hit.length+' of '+rows.length+' villages';
+  var b=document.getElementById(id+'-pager').getElementsByTagName('button');
+  b[0].disabled=p===0; b[1].disabled=p>=pages-1;
+}
+gjPage('vt',0);
+</script>
+{% endif %}
+</body>
+</html>
