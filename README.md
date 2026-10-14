@@ -132,11 +132,15 @@ permanent-water mask; terrain strata for both events; the Otsu baselines;
 the hand-digitised reference for both events; the RTC scenes; the Random
 Forest, U-Net and TerraMind-small models, trained, applied to both events
 and scored (Tables A and D), with paired comparisons and a calibration
-check; the Jal-SAR tool.
+check; the Jal-SAR tool (see `jalsar/README.md`).
 
-**In progress:** two more training runs, with other random seeds, of the
-U-Net and TerraMind with terrain (`RUN SEEDS.bat`), to measure how much a
-result moves when a model is trained again.
+**Seed runs:** done. The U-Net and TerraMind with terrain were each trained
+three times, with different random seeds, to measure how much a result moves
+when a model is trained again. Neither is consistently better on the corridor:
+which one scores higher changes with the seed.
+
+**In progress:** an independent reproduction of the model results on a second
+laptop.
 
 **Semester 2:** hydraulic modelling (HEC-RAS) and landslide susceptibility.
 
