@@ -46,8 +46,12 @@ NOT_THIS = [
      "corridor every few days, so a map can come a day or more after the peak."),
     ("Not operational accuracy.",
      "The models agree with hand-drawn reference maps only partly (the accuracy measured "
-     "on this corridor is printed beside every map). Treat the map as a guide to where to "
-     "look, not as a survey."),
+     "on this corridor is printed beside every map). The map is much less reliable on "
+     "steep slopes and high ground: where the slope is above 33.46 degrees or the ground "
+     "is more than 212.76 m above the river (56.7 per cent of the corridor), the inputs "
+     "are beyond the range the models were trained on, and in the checked windows the "
+     "headline map scored F1 0.09 to 0.16 there, against 0.44 to 0.48 elsewhere. Treat "
+     "the map as a guide to where to look, not as a survey."),
     ("No water depth, no forecast, no damage estimate.",
      "Villages are listed as inside or touching the mapped flood, not as damaged."),
     ("The corridor only.",
