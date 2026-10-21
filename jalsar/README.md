@@ -72,13 +72,18 @@ Build the bulletins and web map from the existing outputs with `RUN JAL-SAR MAPS
 
 Earth Engine needs a login: run `earthengine authenticate` once in the `fyp` environment.
 
-## Outputs for the three events
+## Outputs for the six events
 
 | Event | Radar date | Orbit | Reference used | Notes |
 |---|---|---|---|---|
 | October 2021 | 21 Oct 2021 | 63, descending | yes | validated |
 | July 2023 | 19 Jul 2023 | 63, descending | no | radar only, no reference |
 | August 2023 | 16 Aug 2023 | 129, ascending | yes | validated; primary event |
+| August 2025 | 29 Aug 2025 | 129, ascending | no | radar only; whether a flood happened on this date is unverified |
+| August 2026 (31 July request) | 3 Aug 2026 | 63, descending | no | radar only; Sentinel-1D |
+| August 2026 (6 August request) | 7 Aug 2026 | 129, ascending | no | radar only; Sentinel-1D |
+
+The last three were run on 21 October 2026 with the same trained models as the first three. A second laptop ran the same three dates with its own training run of the models and picked the same radar scenes. Its U-Net maps were 2.0 to 2.6 km² larger and touched more villages, so the area and village figures in a bulletin come from one training run of the headline model.
 
 ## Data and credits
 

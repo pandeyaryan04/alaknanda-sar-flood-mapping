@@ -136,11 +136,22 @@ check; the Jal-SAR tool (see `jalsar/README.md`).
 
 **Seed runs:** done. The U-Net and TerraMind with terrain were each trained
 three times, with different random seeds, to measure how much a result moves
-when a model is trained again. Neither is consistently better on the corridor:
-which one scores higher changes with the seed.
+when a model is trained again. Neither is reliably better on the corridor in
+Table A: across these runs and the reproduction below, TerraMind with terrain
+was never clearly better than the U-Net, and the U-Net was clearly better in
+two of four runs.
 
-**In progress:** an independent reproduction of the model results on a second
-laptop.
+**Reproduction:** done (21 October 2026). A second laptop with the same GPU
+(RTX 3050, 4 GB) ran the whole pipeline from this repository and the data
+package, with the same seed and settings. The data, the scoring and the
+Random Forest reproduced, and the models trained on the corridor (Table D)
+were within 0.007 F1. The networks trained only on Sen1Floods11 (Table A)
+gave different numbers, because GPU training is not exactly repeatable: the
+U-Net stayed within the range of its three seeds, and TerraMind with terrain
+scored below it. The Jal-SAR headline model is the U-Net on both laptops.
+
+**Jal-SAR:** maps, bulletins and the web map for six radar dates; two have a
+hand-drawn reference (see `jalsar/README.md`).
 
 **Semester 2:** hydraulic modelling (HEC-RAS) and landslide susceptibility.
 
@@ -162,7 +173,7 @@ the author.
 `provenance/RESULT_RUN_OPTIONS.json` lists the settings of every reported run,
 and a test checks that `RUN ALL MODELS.bat` passes the same ones. Training on
 a GPU is not exactly repeatable, so a re-run gives close but not identical
-numbers; the seed runs above show how close to expect.
+numbers; the seed runs and the reproduction above show how close to expect.
 
 ## Use of AI tools
 
