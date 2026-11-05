@@ -76,7 +76,7 @@ rasterio = gc.rasterio
 HERE = Path(__file__).resolve().parent
 ENV_FILE = HERE / "jalsar.env"                 # yours, not in git (edit freely)
 ENV_EXAMPLE = HERE / "jalsar.env.example"     # in git; copied to jalsar.env on first use
-EE_PROJECT = "gbpuat-fyp-alaknanda"          # the same project as 01_scene_inventory.py
+EE_PROJECT = os.environ.get("EE_PROJECT", "your-earth-engine-project")          # the same project as 01_scene_inventory.py
 GRID = {"crs": "EPSG:32644", "x0": 231660.0, "y0": 3357010.0, "cell": 10.0,
         "width": 7915, "height": 3044}       # GRID10 and RECT10 of 10_reexport_corridor_v2.js
 BANDS = ("VV", "VH", "angle")
@@ -165,7 +165,7 @@ def ee_init():
     except Exception as exc:                      # noqa: BLE001
         mc.fail(f"Could not connect to Earth Engine (project {EE_PROJECT}): {exc}\n"
                 "If it says you are not authenticated, run:  earthengine authenticate\n"
-                "then run this again.")
+                "then run this again. If the project is wrong, set it with:  setx EE_PROJECT your-project-id")
     return ee
 
 

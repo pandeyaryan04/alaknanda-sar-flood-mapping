@@ -52,8 +52,8 @@ ALREADY RUN, 21 August 2026. Both events passed at 100% corridor coverage:
   2023-08-14 event, orbit 129 ascending,  post 2023-08-16 (+2 d), pre 2022-11-01
   2021-10-19 event, orbit  63 descending, post 2021-10-21 (+2 d), pre 2020-11-19
 
-Only re-run it if the corridor changes, the candidate events change, or the
-EE_PROJECT line below changes.
+Only re-run it if the corridor changes, the candidate events change, or your
+EE_PROJECT setting changes.
 
 If Earth Engine says you are not authenticated:
     earthengine authenticate
@@ -73,9 +73,9 @@ from datetime import datetime, timedelta
 # CONFIGURATION - these are the only lines you should need to edit
 # ============================================================================
 
-# Your Earth Engine cloud project. If you make a new one for this project,
-# change this string and nothing else.
-EE_PROJECT = "gbpuat-fyp-alaknanda"
+# Your Earth Engine cloud project, read from the EE_PROJECT setting. Set it once in
+# Command Prompt with:  setx EE_PROJECT your-project-id   (then open a new window).
+EE_PROJECT = os.environ.get("EE_PROJECT", "your-earth-engine-project")
 
 OUT_DIR = "data"
 
@@ -155,7 +155,7 @@ def init_ee():
             "  1. Have you authenticated on this machine? Run:\n"
             "         earthengine authenticate\n"
             "     then follow the browser prompt.\n"
-            "  2. Is EE_PROJECT at the top of this file the right project id?\n"
+            "  2. Is the EE_PROJECT setting your project id? (setx EE_PROJECT your-project-id)\n"
             "     Find it at https://code.earthengine.google.com (top right).\n"
         )
     print(f"Connected to Earth Engine, project '{EE_PROJECT}'.")

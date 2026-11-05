@@ -35,7 +35,7 @@
 //
 // HOW TO USE
 //   1. https://code.earthengine.google.com
-//   2. Top right must say gbpuat-fyp-alaknanda. Switch if it does not
+//   2. Top right must show your own project. Switch if it does not
 //   3. NEW, File, name it 10_reexport_corridor_v2, paste this whole file
 //   4. Save, then Run
 //   5. READ THE CONSOLE FIRST. Block 0 must print about 606.35 km2.

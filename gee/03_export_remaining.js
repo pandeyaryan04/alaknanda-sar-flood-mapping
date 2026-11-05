@@ -23,7 +23,7 @@
 //       than a stack of 5 km rasters, so this exports the table.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. Paste this whole file in
 //   3. Click Run
 //   4. Read the three text blocks in the Console

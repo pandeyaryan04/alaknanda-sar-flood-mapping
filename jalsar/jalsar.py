@@ -22,6 +22,11 @@ check-download
            Download 21 October 2021 again and compare it with the scene in
            05 Data (the downloader's acceptance test). Needs Earth Engine.
 events     List the events Jal-SAR knows and whether each is done.
+trustscores
+           Stage M2: score the headline map of each validated event inside
+           each trust class (hit rate, false alarm ratio, CSI) into
+           06 Outputs\jalsar\trust_scores.json and .md. The web map and the
+           bulletins show them; 'webmap' refreshes them first.
 
 USAGE: HOW TO RUN THIS  (copy one line, paste into Anaconda Prompt, press Enter)
 ================================================================================
@@ -34,6 +39,7 @@ USAGE: HOW TO RUN THIS  (copy one line, paste into Anaconda Prompt, press Enter)
     python jalsar.py maps --event all
     python jalsar.py maps --event 2023-08-16 --force
     python jalsar.py bulletin --event all
+    python jalsar.py trustscores
     python jalsar.py webmap --force
     python jalsar.py check-download
     python jalsar.py run --date 2025-08-14
@@ -185,9 +191,27 @@ def cmd_bulletin(gp, args):
     return 0
 
 
+def cmd_trustscores(gp, args):
+    import jalsar_extras as gx
+    print("jalsar.py trustscores")
+    r = gx.compute_trust_scores(gp)
+    if r is None:
+        print("  no validated event with a trust layer yet; nothing to score")
+        return 0
+    for name, sc in r["pooled"].items():
+        if sc:
+            print(f"  {name:<12} hit rate {sc['hit_rate']}, false alarm ratio {sc['far']}, CSI {sc['csi']}")
+    print(f"  wrote {gx.trust_scores_path(gp)} and trust_scores.md")
+    print("PASS")
+    return 0
+
+
 def cmd_webmap(gp, args):
     import jalsar_webmap as gw
+    import jalsar_extras as gx
     print("jalsar.py webmap")
+    if gx.compute_trust_scores(gp) is not None:
+        print("  trust scores refreshed (06 Outputs\\jalsar\\trust_scores.json)")
     gw.build_webmap(gp, force=args.force, flood_cell=args.flood_cell)   # over the size limit: a warning
     print("PASS")
     return 0
@@ -216,6 +240,7 @@ def main(argv=None):
     ap.add_argument("--selftest", action="store_true")
     sub = ap.add_subparsers(dest="cmd")
     sub.add_parser("events")
+    sub.add_parser("trustscores")
     r = sub.add_parser("roads")
     r.add_argument("--force", action="store_true")
     m = sub.add_parser("maps")
@@ -252,7 +277,8 @@ def main(argv=None):
         return 1
     gp = gc.GPaths(args.project)
     return {"events": cmd_events, "roads": cmd_roads, "maps": cmd_maps, "bulletin": cmd_bulletin,
-            "webmap": cmd_webmap, "run": cmd_run, "check-download": cmd_check}[args.cmd](gp, args)
+            "webmap": cmd_webmap, "run": cmd_run, "check-download": cmd_check,
+            "trustscores": cmd_trustscores}[args.cmd](gp, args)
 
 
 def selftest():

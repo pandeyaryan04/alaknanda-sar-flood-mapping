@@ -37,6 +37,7 @@ __writes__ = ["provenance/EARTH_ENGINE_INPUTS.csv"]
 
 import csv
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -44,7 +45,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CORRIDOR = ROOT / "05 Data" / "boundaries" / "corridor_v2_3km_clipped.geojson"
 OUT = ROOT / "04 Code" / "provenance" / "EARTH_ENGINE_INPUTS.csv"
-EE_PROJECT = "gbpuat-fyp-alaknanda"
+EE_PROJECT = os.environ.get("EE_PROJECT", "your-earth-engine-project")
 
 # The same lists as 10_reexport_corridor_v2.js, blocks A and B
 S1 = [

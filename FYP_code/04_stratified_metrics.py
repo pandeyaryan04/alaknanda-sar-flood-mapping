@@ -74,6 +74,16 @@ rest of the 23 September rule.
   - The merged table is the one to quote. The table as classified, before any
     merge, is kept below it in metrics_summary.md and in the CSV
     (column table = as_classified), so nothing is hidden.
+
+HIT RATE AND FALSE ALARM RATIO (added 21 October 2026, Stage M1, from a
+review suggestion). Hydrology papers score flood maps with three numbers:
+  hit rate (probability of detection) = TP / (TP + FN), the same as recall;
+  false alarm ratio                    = FP / (TP + FP), which is 1 - precision;
+  critical success index (CSI)         = TP / (TP + FP + FN), the same as IoU.
+These are now columns of their own (hit_rate, far, csi), each with a window
+bootstrap interval from the same 2000 resamples. Every column that existed
+before is computed exactly as before; the new columns are added at the end of
+the CSV, so scripts that read it by column name are unaffected.
 ================================================================================
 """
 
@@ -161,10 +171,11 @@ def metrics_from_counts(tp, fp, fn, tn):
         # but none of it overlaps, the same as IoU. nan only when both are empty.
         f1 = np.where(tp + fp + fn > 0, 2 * tp / (2 * tp + fp + fn), np.nan)
         iou = np.where(tp + fp + fn > 0, tp / (tp + fp + fn), np.nan)
+        far = np.where(tp + fp > 0, fp / (tp + fp), np.nan)   # false alarm ratio
         den = np.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
         mcc = np.where(den > 0, (tp * tn - fp * fn) / den, np.nan)
     return {"precision": precision, "recall": recall, "f1": f1,
-            "iou": iou, "mcc": mcc}
+            "iou": iou, "mcc": mcc, "far": far}
 
 
 def window_counts(pred, truth, sel, win, n_win):
@@ -203,6 +214,8 @@ def score(wc, weights):
         "f1": round(float(m["f1"]), 4),
         "iou": round(float(m["iou"]), 4),
         "csi": round(float(m["iou"]), 4),   # critical success index is the same quantity
+        "hit_rate": round(float(m["recall"]), 4),   # probability of detection, the same as recall
+        "far": round(float(m["far"]), 4),           # false alarm ratio, 1 - precision
         "mcc": round(float(m["mcc"]), 4),
         "overall_accuracy": round((tp + tn) / n, 4),
         "thin": (tp + fn) < MIN_FLOOD_PIXELS,
@@ -222,6 +235,16 @@ def score(wc, weights):
             r[f"{k}_lo"], r[f"{k}_hi"] = round(float(lo), 4), round(float(hi), 4)
         else:                       # undefined in most resamples: no interval
             r[f"{k}_lo"] = r[f"{k}_hi"] = float("nan")
+    # Stage M1: the same rule for hit rate and false alarm ratio. CSI is IoU,
+    # so its interval is the IoU interval.
+    for k, name in (("recall", "hit_rate"), ("far", "far")):
+        v = bm[k][~np.isnan(bm[k])]
+        if r["windows_with_flood"] >= MIN_WINDOWS_CI and v.size >= 0.5 * len(bm[k]):
+            lo, hi = np.percentile(v, [2.5, 97.5])
+            r[f"{name}_lo"], r[f"{name}_hi"] = round(float(lo), 4), round(float(hi), 4)
+        else:
+            r[f"{name}_lo"] = r[f"{name}_hi"] = float("nan")
+    r["csi_lo"], r["csi_hi"] = r["iou_lo"], r["iou_hi"]
     return r
 
 
@@ -393,7 +416,9 @@ def main():
     cols = ["table", "reach", "dimension", "stratum", "merged_from", "pixels",
             "flood_pixels_truth", "windows_with_flood", "tp", "fp", "fn", "tn",
             "precision", "recall", "f1", "f1_lo", "f1_hi", "iou", "iou_lo", "iou_hi",
-            "csi", "mcc", "mcc_lo", "mcc_hi", "overall_accuracy", "thin"]
+            "csi", "mcc", "mcc_lo", "mcc_hi", "overall_accuracy", "thin",
+            "hit_rate", "hit_rate_lo", "hit_rate_hi", "far", "far_lo", "far_hi",
+            "csi_lo", "csi_hi"]
     csv_path = os.path.join(args.out, "metrics_by_stratum.csv")
     with open(csv_path, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=cols)
@@ -410,21 +435,25 @@ def main():
 
     def table(rs):
         out = ["| Reach | Dimension | Stratum | Flood px | Windows | Precision | Recall | "
-               "F1 [95% CI] | IoU / CSI [95% CI] | MCC [95% CI] | OA |",
-               "|---|---|---|---|---|---|---|---|---|---|---|"]
+               "F1 [95% CI] | IoU / CSI [95% CI] | MCC [95% CI] | OA | "
+               "Hit rate [95% CI] | False alarm ratio [95% CI] |",
+               "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
         for r in rs:
             flag = " *" if r.get("thin") else ""
             out.append(f"| {r['reach']} | {r['dimension']} | {r['stratum']}{flag} | "
                        f"{r['flood_pixels_truth']} | {r['windows_with_flood']} | "
                        f"{r['precision']} | {r['recall']} | {ci(r, 'f1')} | {ci(r, 'iou')} | "
-                       f"{ci(r, 'mcc')} | {r['overall_accuracy']} |")
+                       f"{ci(r, 'mcc')} | {r['overall_accuracy']} | "
+                       f"{ci(r, 'hit_rate')} | {ci(r, 'far')} |")
         return out
 
     lines = [f"# Stratified accuracy: {args.label}", "",
              f"Incidence angle source: {meta.get('incidence_angle_source')}",
              f"Orbit pass: {meta.get('orbit_pass')}", "",
              "Critical success index is the same quantity as IoU and is given",
-             "under both names because the flood literature uses both.", "",
+             "under both names because the flood literature uses both.",
+             "Hit rate is recall (TP / (TP + FN)); false alarm ratio is",
+             "FP / (TP + FP), that is 1 minus precision.", "",
              "Report the two reaches separately. The pooled rows are there for",
              "checking, not for quoting on their own.", "",
              f"Brackets: 95 per cent interval from resampling the {n_win} digitising "

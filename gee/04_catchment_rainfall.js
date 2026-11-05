@@ -24,7 +24,7 @@
 // it should be believed.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. Paste this whole file into a new script
 //   3. Click Run
 //   4. Check the printed catchment area against 8602 km2

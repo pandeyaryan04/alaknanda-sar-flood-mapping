@@ -68,7 +68,7 @@ METRIC = "EPSG:32644"
 # grid (COP GLO-30, SRTM, JRC, CartoDEM v2), 2639 x 1016 cells from 231660,
 # 3357030. It reaches 20 m further east and south than the 10 m Sentinel grid
 # (to 310810 and 3326570). This box gives the 606.35 km2 corridor in use;
-# the 10 m box gives 605.99 km2. Decision S2, 7 October 2026.
+# the 10 m box gives 605.99 km2 (settled 7 October 2026).
 IMAGERY = box(231660.0, 3326550.0, 310830.0, 3357030.0)
 
 fwd = Transformer.from_crs("EPSG:4326", METRIC, always_xy=True)

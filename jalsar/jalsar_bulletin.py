@@ -317,6 +317,33 @@ def context(gp, event, summ, print_mode=False):
     def pooled(key):
         return gd.f1_text(((val or {}).get(key, {}).get(fam) or {}).get(gd.POOLED))
 
+    import jalsar_extras as gx
+    # WorldPop people per village from m8_risk_view.py, when it has run; the table then shows
+    # WorldPop as the main number and Census 2011 goes to the village CSV only.
+    vp = gx.village_people(gp, event)
+    if v and vp:
+        for row in v.get("villages", []):
+            x = (vp.get("villages") or {}).get(str(row.get("vlcode", "")))
+            row["worldpop_village"] = x.get("worldpop_village") if x else None
+            row["worldpop_in_flood"] = x.get("worldpop_in_flood") if x else None
+            row["risk_class"] = x.get("risk_class") if x else None
+            row["vulnerability_name"] = x.get("vulnerability_name") if x else None
+    # the short exposure table (people, buildings, roads, lines, poles, towers, with sources),
+    # from M7's exposure.json and the road length
+    xs, _ = gx.exposure(gp, event)
+    expo_rows = gx.exposure_rows(xs, roads)
+    ts = gx.load_trust_scores(gp)
+    ts_rows = []
+    if ts:
+        for k in gx.TRUST_ORDER:
+            n = gc.TRUST_NAMES[k]
+            sc = ts["pooled"].get(n)
+            sh = ts["reference_flood_share_by_class"].get(n)
+            ts_rows.append({"name": n, "col": gd.TRUST_COLOURS[k],
+                            "share": "n/a" if sh is None else f"{sh * 100:.0f} %",
+                            "hit": gx._ci(sc, "hit_rate", True), "far": gx._ci(sc, "far", True),
+                            "csi": gx._ci(sc, "csi")})
+    ts_plain = gx.trust_plain_numbers(ts)
     mean_d = (head.get("scores") or {}).get(fam, {}).get("table_d_f1_mean")
     fmt = {"area_total": gd.num(tot, 2), "area_high": gd.num(a["by_trust"]["high"], 2),
            "area_med": gd.num(a["by_trust"]["medium"], 2), "area_low": gd.num(a["by_trust"]["low"], 2),
@@ -329,6 +356,12 @@ def context(gp, event, summ, print_mode=False):
            "min_ha": gd.num((v or {}).get("min_flood_km2", 0) * 100, 0) if v else "n/a",
            "population": gd.num(v["population_2011"], 0) if v else "n/a",
            "households": gd.num(v["households_2011"], 0) if v else "n/a",
+           "wp_villages": gd.num((vp or {}).get("summary", {}).get("worldpop_villages"), 0) if vp else "n/a",
+           "wp_in_flood": gd.num(((xs or {}).get("population") or {}).get("inside"), 0) if xs else
+           (gd.num((vp or {}).get("summary", {}).get("worldpop_in_flood_all"), 0) if vp else "n/a"),
+           "wp_min_area": gd.num(sum((r.get("worldpop_village") or 0) for r in (v or {}).get("villages", [])
+                                     if r["flood_km2"] >= (v or {}).get("min_flood_km2", 0) - 1e-9), 0)
+           if v and vp else "n/a",
            "road_km": gd.num(roads["total_flood_km"], 2) if roads else "n/a",
            "blind": gd.num(s["trust"]["radar_blind_km2"], 2),
            "f1_a": pooled("table_a"), "f1_d": pooled("table_d"),
@@ -342,9 +375,13 @@ def context(gp, event, summ, print_mode=False):
             "c": {"maroon": gd.MAROON, "trust": gd.TRUST_COLOURS},
             "fmt": fmt, "map": fig, "insets": insets, "reach_rows": reach_rows,
             "agree_rows": agree_rows, "family_rows": family_rows, "villages": v, "roads": roads,
+            "worldpop": bool(vp), "risk_colours": gx.RISK_COLOURS, "expo_rows": expo_rows,
+            "expo_limits": gx.EXPOSURE_LIMITS if expo_rows else "",
+            "villages_csv": (f"bulletin_{event.id}_villages.csv" if v and v.get("villages") else None),
             "road_rows": road_rows, "validation": val, "val_rows": val_rows,
             "n_windows": n_windows or "several", "score_rows": score_rows,
             "trust_rows": trust_rows, "trust_basis": trust_basis, "trust_plain": gd.TRUST_PLAIN,
+            "trust_scores": ts, "ts_rows": ts_rows, "ts_high": ts_plain.get("high", ""),
             "not_this": gd.NOT_THIS,
             "credits": gd.CREDITS, "footer": gd.FOOTER, "files": s.get("files", [])}
 
@@ -437,6 +474,20 @@ def add_footer(src, dst, left=gd.FOOTER):
 # One event
 # =============================================================================
 
+def write_village_csv(path, v):
+    """The bulletin's village table with every figure, Census 2011 included (Census 2011 goes in the CSV only)."""
+    if not v or not v.get("villages"):
+        return
+    import csv
+    keys = ["village", "vlcode", "block", "subdistrict", "district", "worldpop_village", "worldpop_in_flood",
+            "risk_class", "vulnerability_name", "flood_km2", "flood_high_trust_km2", "share_flooded",
+            "village_km2", "households_2011", "population_2011", "lon", "lat"]
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=keys, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(v["villages"])
+
+
 def make_bulletin(gp, event, force=False, pdf=True):
     html_p, pdf_p = bulletin_paths(gp, event)
     summ_p = gp.event_dir(event.id) / "summary.json"
@@ -450,7 +501,9 @@ def make_bulletin(gp, event, force=False, pdf=True):
     t0 = time.time()
     out = {"html": str(html_p), "pdf": None}
     if force or not html_p.exists():
-        html_p.write_text(render(context(gp, event, summ)), encoding="utf-8")
+        ctx = context(gp, event, summ)
+        html_p.write_text(render(ctx), encoding="utf-8")
+        write_village_csv(html_p.with_name(f"bulletin_{event.id}_villages.csv"), ctx.get("villages"))
         print(f"  {event.id}: wrote {html_p.name} ({html_p.stat().st_size / 1e6:.1f} MB)", flush=True)
     if want_pdf:
         browser = find_browser()

@@ -57,3 +57,11 @@ dependencies:
       - hyp3-sdk>=7.7           # t07_download asf
       - earthaccess>=0.17       # t07_download earthdata
       - imdlib>=0.1.21         # t07_download imd
+      # --- Jal-SAR extensions (jalsar/extensions) ---
+      - shap>=0.51              # M4, M5
+      - cdsapi>=0.7.7           # M9, M10: GloFAS downloads
+      - netCDF4>=1.7            # M9, M10: GloFAS files
+      - pmtiles>=3.8            # M7: mobile tower tiles
+      # M7 also needs mapbox-vector-tile 2.2.0. Install it on its own with --no-deps
+      # (jalsar/extensions/M INSTALL EXTRA FIX.bat): it asks for protobuf below 7,
+      # and 2.2.0 was tested working with protobuf 7.35.1.

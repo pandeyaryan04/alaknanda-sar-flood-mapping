@@ -45,6 +45,7 @@ FYP_code/          the pipeline: scene screening, terrain strata, flood maps, mo
 gis_tools/         standalone tools that replace hand work in QGIS, plus scripted downloads
 gee/               Google Earth Engine export scripts
 jalsar/            Jal-SAR, a flood-mapping tool built on the trained models
+jalsar/extensions/ extra checks and layers for Jal-SAR (section below)
 docs/              the setup runbook and the digitising reference
 provenance/        package versions, data checksums, and the settings of every reported run
 tests/             automated tests on synthetic data
@@ -175,6 +176,51 @@ and a test checks that `RUN ALL MODELS.bat` passes the same ones. Training on
 a GPU is not exactly repeatable, so a re-run gives close but not identical
 numbers; the seed runs and the reproduction above show how close to expect.
 
+## Jal-SAR extensions
+
+`jalsar/extensions/` adds checks and map layers to Jal-SAR. They were written
+after a review of the first results; the M numbers in the file names are the
+review's item numbers. They read the trained models and the Jal-SAR outputs.
+None of them changes a number in Table A or Table D.
+
+| Scripts | What they do |
+|---|---|
+| `m1_rescore.py` | hit rate, false alarm ratio and CSI for every scored map |
+| `m4_*.py`, `m5_shap_networks.py` | SHAP values for the Random Forest, the U-Net and both TerraMind models |
+| `m6_pca.py` | principal component analysis of the four model inputs |
+| `m7_*.py` | exposure: buildings (Google Open Buildings, checked against OpenStreetMap), roads, power lines and mobile towers in and near each mapped flood |
+| `m8_*.py` | WorldPop age and sex structure, a village vulnerability index (PCA) and a village risk view |
+| `m9_*.py` | GloFAS river forecasts: download, reading, and a forecast watch with its hindcast on the radar dates |
+| `m10_*.py` | GloFAS discharge to river stage to a rough flood extent from height above the river (HAND) |
+| `m11_*.py` | a blind test on the Beas valley flood of July 2023, and a comparison with the Copernicus GFM flood extent |
+| `m13_forecast_ml.py` | forecast flood maps from a Random Forest and a small U-Net that take no radar |
+| `smoke_*.py` | a quick check that the machine is ready |
+
+The forecast layers are a study view, not a warning. For warnings, follow CWC
+and the district administration.
+
+To run them, open Anaconda Prompt, run `conda activate fyp`, and drag each
+`.bat` file into the window, in this order:
+
+1. `M0 INSTALL PACKAGES.bat`, `M INSTALL EXTRA.bat`, then `M INSTALL EXTRA FIX.bat`
+   (the extra packages; the last one puts in mapbox-vector-tile 2.2.0 with `--no-deps`).
+2. `M0 SAVE KEYS.bat`: a Copernicus EWDS key for GloFAS and an OpenCelliD token,
+   saved in your user folder and never in the repository.
+3. `M DOWNLOADS.bat`: OpenStreetMap, World Bank and OpenCelliD data, and a first pass
+   at GloFAS. Then `M9 GLOFAS AGAIN.bat` until it says `GLOFAS DONE` (the later
+   files check for it).
+4. `M1 HIT RATE AND CSI.bat`, `M OVERNIGHT.bat` (M4 and M6), `M DAY 2.bat`
+   (M7, M8, M10, M9, the web map, then M5 on the GPU) and `M8 CHECK VERSION.bat`
+   (the WorldPop-only index).
+5. `M DAY 3.bat`, `M11 BEAS AND GFM.bat`, then `M11 EXTRA CHECKS.bat`.
+6. `M13 FORECAST ML.bat` (1.5 to 3 hours on a 4 GB laptop GPU).
+
+Later, `M9 GLOFAS 2026 AGAIN.bat` then `M9 M10 FORECAST.bat` bring the forecast
+up to date, and `SMOKE TEST.bat` checks that everything is in place.
+`FORECAST DAILY ON.bat` and `FORECAST DAILY OFF.bat` switch a daily forecast
+run in Windows Task Scheduler on and off. Outputs go to
+`06 Outputs\jalsar\extensions\`. Run one file at a time.
+
 ## Use of AI tools
 
 Claude, an AI tool made by Anthropic, was used as a tool to help write the
@@ -185,8 +231,8 @@ code. I designed the study and ran all of the code on my own computer.
 MIT. See `LICENSE`. The licence covers the code only; each data source keeps
 its own terms (table above).
 
-## Author
+## About
 
-Aryan Pandey, Department of Civil Engineering, G. B. Pant University of
-Agriculture and Technology, Pantnagar, Uttarakhand. Supervisor:
+Final year B.Tech project, Department of Civil Engineering, G. B. Pant
+University of Agriculture and Technology, Pantnagar, Uttarakhand. Supervisor:
 [Dr. Sandeep Gupta](https://gbpuat.ac.in/colleges/COT/D1/sandeep_gupta_profile.html).

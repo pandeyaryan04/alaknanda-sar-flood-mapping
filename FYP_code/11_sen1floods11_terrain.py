@@ -76,7 +76,7 @@ except ImportError as e:
     sys.exit(f"\nMissing package: {e}.\nActivate the environment first:  conda activate fyp\n")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-EE_PROJECT = "gbpuat-fyp-alaknanda"          # the same project as 01_scene_inventory.py
+EE_PROJECT = os.environ.get("EE_PROJECT", "your-earth-engine-project")          # the same project as 01_scene_inventory.py
 S1F = os.path.join(HERE, "data", "sen1floods11", "v1.1", "data", "flood_events")
 SETS = {
     "hand": (os.path.join(S1F, "HandLabeled", "S1Hand"), "_S1Hand.tif"),
@@ -159,7 +159,8 @@ def ee_init():
                  f"  project tried : {EE_PROJECT}\n  message       : {exc}\n\n"
                  "If it says you are not authenticated, run:\n"
                  "    earthengine authenticate\n"
-                 "then run this script again.\n")
+                 "then run this script again. If the project is wrong, set it with\n"
+                 "    setx EE_PROJECT your-project-id   (then open a new window)\n")
     _EE_READY = True
 
 

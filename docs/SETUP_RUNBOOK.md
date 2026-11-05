@@ -114,8 +114,13 @@ A browser opens. Sign in with the Google account that has Earth Engine access,
 approve, and paste the code back if asked.
 
 Find your project id at `https://code.earthengine.google.com` — top right, next
-to your avatar. If it is **not** `gbpuat-fyp-alaknanda`, open `01_scene_inventory.py`
-in Notepad and change the `EE_PROJECT` line near the top.
+to your avatar. Save it once as a setting, so every script finds it:
+
+```
+setx EE_PROJECT your-project-id
+```
+
+Close Command Prompt and open a new one; the setting reaches new windows only.
 
 ---
 
@@ -337,7 +342,7 @@ Open Anaconda Prompt from the Start menu.
 **`ModuleNotFoundError`** — the environment is not active. The prompt must show `(fyp)`.
 
 **Earth Engine says not authenticated** — run `earthengine authenticate` again, and
-check `EE_PROJECT` in `01_scene_inventory.py` matches the project id shown at
+check the `EE_PROJECT` setting (`echo %EE_PROJECT%`) matches the project id shown at
 `code.earthengine.google.com`.
 
 **`torch.cuda.is_available()` is False** — CPU build installed. Redo step 3.

@@ -4,8 +4,8 @@ r"""
 Merge the three district landslide inventories into one layer, and remove the
 polygons that appear twice because they sit on a shared district border.
 
-Written 9 September 2026. Trap 8 in the project context says: before merging
-the three district files, check for duplicates on the shared borders. This does
+Written 9 September 2026. Before merging the three district files, they must be
+checked for duplicates on the shared borders. This does
 the check and the merge in one pass, and reports exactly what it removed.
 
 WHY DUPLICATES EXIST
@@ -23,8 +23,8 @@ HOW A DUPLICATE IS DECIDED
   0.5. The check runs only across districts, never within one, because a file
   is allowed to hold two genuinely adjacent slides.
 
-  Geometry is compared in a metric CRS, not in degrees. Trap 6 in the project
-  context is the same mistake made on an area field.
+  Geometry is compared in a metric CRS, not in degrees: an area measured in
+  square degrees shrinks with latitude and means nothing on the ground.
 
 HOW TO RUN
 

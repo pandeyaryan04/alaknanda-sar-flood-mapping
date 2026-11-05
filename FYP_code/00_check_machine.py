@@ -193,7 +193,7 @@ head("EARTH ENGINE")
 try:
     import ee
     try:
-        ee.Initialize(project=os.environ.get("EE_PROJECT", "gbpuat-fyp-alaknanda"))
+        ee.Initialize(project=os.environ.get("EE_PROJECT", "your-earth-engine-project"))
         n = ee.ImageCollection("COPERNICUS/S1_GRD").filterDate("2023-08-01", "2023-08-20").size().getInfo()
         say(f"  authenticated   : yes")
         say(f"  test query      : OK ({n} Sentinel-1 scenes worldwide, 1-20 Aug 2023)")

@@ -12,7 +12,7 @@
 // the methods.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. NEW, File, name it 11_check_s2_versions_2021, paste this whole file
 //   3. Save, then Run
 //   4. Copy everything in the Console and keep it

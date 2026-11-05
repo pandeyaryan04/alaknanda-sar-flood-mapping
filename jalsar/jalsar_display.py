@@ -41,9 +41,11 @@ POOLED = "both reaches pooled"
 
 # Printed on every bulletin and on the web map.
 NOT_THIS = [
-    ("Not a warning system.",
+    ("Not an official warning system.",
      "Jal-SAR maps a flood after a satellite pass, not before. Sentinel-1 passes the "
-     "corridor every few days, so a map can come a day or more after the peak."),
+     "corridor every few days, so a map can come a day or more after the peak. Where the "
+     "Forecast layer is shown, it repeats the published GloFAS river forecast for the coming "
+     "days as a study view only; for warnings, follow CWC and the district administration."),
     ("Not operational accuracy.",
      "The models agree with hand-drawn reference maps only partly (the accuracy measured "
      "on this corridor is printed beside every map). The map is much less reliable on "
@@ -52,8 +54,9 @@ NOT_THIS = [
      "are beyond the range the models were trained on, and in the checked windows the "
      "headline map scored F1 0.09 to 0.16 there, against 0.44 to 0.48 elsewhere. Treat "
      "the map as a guide to where to look, not as a survey."),
-    ("No water depth, no forecast, no damage estimate.",
-     "Villages are listed as inside or touching the mapped flood, not as damaged."),
+    ("No water depth, no damage estimate.",
+     "Villages are listed as inside or touching the mapped flood, not as damaged. The "
+     "forecast extent is a rough picture from height above the river, not a flood model."),
     ("The corridor only.",
      "The trust layer is measured on this corridor (Rudraprayag to Rishikesh) and nowhere "
      "else."),

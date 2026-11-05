@@ -20,7 +20,7 @@
 // the version that does not waste an evening.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. New script, paste this whole file in
 //   3. Click Run
 //   4. Read the printed district list and population total, they are the check

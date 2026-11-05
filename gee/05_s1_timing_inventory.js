@@ -34,7 +34,7 @@
 // two-look-geometries claim rather than undermining it.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. New script, paste this whole file in
 //   3. Click Run
 //   4. Copy the four text blocks out of the Console and keep them

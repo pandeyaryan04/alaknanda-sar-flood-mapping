@@ -4,7 +4,7 @@
 //
 // HOW TO USE
 //   1. Go to https://code.earthengine.google.com
-//   2. Make sure the project shown top right is gbpuat-fyp-alaknanda
+//   2. Make sure the project shown top right is your own
 //   3. Paste this whole file into the code panel
 //   4. Click Run
 //   5. Look at the map to check the corridor sits on the river

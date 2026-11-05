@@ -39,9 +39,9 @@ For one date, Jal-SAR writes to `06 Outputs\jalsar\<date>_orbit<nn>\`:
 
 ## What it is not
 
-- **Not a warning system.** It maps a flood after a satellite pass. A map can be a day or more behind the peak.
+- **Not an official warning system.** It maps a flood after a satellite pass. A map can be a day or more behind the peak. The Forecast layer (Jal-SAR extensions) repeats the published GloFAS river forecast as a study view only; for warnings, follow CWC and the district administration.
 - **Not operational accuracy.** On GRD radar, the best model scores F1 0.41 to 0.52 on the corridor, depending on the year and the test (Table A and Table D). The map is much less reliable on steep slopes and high ground. Where the slope is above 33.46 degrees or the ground is more than 212.76 m above the river (56.7 per cent of the corridor), the inputs are beyond the range the models were trained on. In the checked windows, the headline map scored F1 0.09 to 0.16 on those cells, against 0.44 to 0.48 elsewhere. Every bulletin prints the measured accuracy next to the map.
-- **No depth, forecast or damage estimate.** Villages are listed as "inside or touching the mapped flood", not as damaged.
+- **No depth or damage estimate.** Villages are listed as "inside or touching the mapped flood", not as damaged. The forecast extent is a rough picture from height above the river (HAND), not a flood model.
 - **Corridor only.** The trust layer was measured on this corridor and nowhere else.
 
 ## How the trust layer works
@@ -63,7 +63,7 @@ Each model is trained on the hand-labelled Sen1Floods11 set. For TerraMind, the 
 
 You need Windows 11 and the project's conda environment `fyp`. No new packages are needed.
 
-1. Open `04 Code\jalsar\jalsar_runner.py` in Notepad, find `EE_PROJECT =` (near line 79), and replace the project ID between the quotes with your own Earth Engine project. Keep the quotes.
+1. Save your own Earth Engine project id once, in Command Prompt: `setx EE_PROJECT your-project-id`. Then open a new window; every script that uses Earth Engine reads it.
 2. Run `RUN JAL-SAR CHECK DOWNLOAD.bat` once. It downloads the 21 October 2021 scene again and compares it with the copy on disk. It must print `JAL-SAR DOWNLOAD CHECK PASS`.
 3. For a new date, run `RUN JAL-SAR.bat` and type the date as `YYYY-MM-DD`.
 4. If no radar pass is found, change `SEARCH_DAYS=3` to `SEARCH_DAYS=6` in `jalsar.env`, run again, then change it back.
@@ -96,4 +96,4 @@ The last three were run on 21 October 2026 with the same trained models as the f
 
 ## Licence
 
-MIT. Copyright (c) 2026 Aryan Pandey. The licence covers the code only; the data carry the licences of their sources listed above.
+MIT; see LICENSE in the repository root. The licence covers the code only; the data carry the licences of their sources listed above.

@@ -117,3 +117,6 @@ desktop.ini
 *.safetensors
 *.h5
 document_builders/
+
+# Jal-SAR extensions: old copies kept on disk only
+jalsar/extensions/backup/

@@ -14,7 +14,7 @@ commit.
 | # | What | How | Check |
 |---|---|---|---|
 | 0.1 | Environments `fyp` and `fypdl` | `docs\SETUP_RUNBOOK.md`; exact versions in `04 Code\provenance\environment_*.yml` and `pip_freeze_*.txt` | `python 00_check_machine.py` |
-| 0.2 | Earth Engine access, project `gbpuat-fyp-alaknanda` | `earthengine authenticate` | |
+| 0.2 | Earth Engine access, and your project id in the `EE_PROJECT` setting | `earthengine authenticate`, then `setx EE_PROJECT your-project-id` (new window after) | |
 | 0.3 | `gis_tools\.env` | copy `.env.example` to `.env`, set `PROJECT_ROOT` | `gis_tools\SELFTEST.bat` |
 
 ## 1. Source data (downloaded, not made)
@@ -101,6 +101,26 @@ compares a machine's files with it).
 | 5.3 | `python 18_data_manifest.py --verify` | on another machine: `changed 0, missing 0` |
 | 5.4 | `python 19_number_audit.py` | every number quoted in the report against the files |
 
+## 6. Jal-SAR extensions
+
+Files in `jalsar\extensions\`, run from Anaconda Prompt with `fyp` active.
+What each script does is in the README, section "Jal-SAR extensions".
+
+| # | Command | Result |
+|---|---|---|
+| 6.1 | `M0 INSTALL PACKAGES.bat`, `M INSTALL EXTRA.bat`, `M INSTALL EXTRA FIX.bat` | shap, cdsapi, netCDF4, pmtiles, mapbox-vector-tile 2.2.0 in `fyp` |
+| 6.2 | `M0 SAVE KEYS.bat` | GloFAS key and OpenCelliD token in your user folder |
+| 6.3 | `M DOWNLOADS.bat`, then `M9 GLOFAS AGAIN.bat` | OpenStreetMap, World Bank and OpenCelliD files; GloFAS, ending `GLOFAS DONE` |
+| 6.4 | `M1 HIT RATE AND CSI.bat` | hit rate, false alarm ratio and CSI for every scored map |
+| 6.5 | `M OVERNIGHT.bat` | M4 SHAP (Random Forest), M6 PCA |
+| 6.6 | `M DAY 2.bat` | M7 exposure, M8 vulnerability, M10, M9, web map, M5 SHAP (GPU) |
+| 6.7 | `M8 CHECK VERSION.bat` | the WorldPop-only vulnerability index |
+| 6.8 | `M DAY 3.bat` | upstream area, M10 gauges, forecast watch (both rules), risk view, building and slope checks, web map, bulletins |
+| 6.9 | `M11 BEAS AND GFM.bat`, then `M11 EXTRA CHECKS.bat` | the Beas blind test and the GFM comparison |
+| 6.10 | `M13 FORECAST ML.bat` | forecast flood maps from machine learning |
+| 6.11 | `M9 GLOFAS 2026 AGAIN.bat`, then `M9 M10 FORECAST.bat` | the forecast brought up to date |
+| 6.12 | `SMOKE TEST.bat` | `SMOKE PASS` when everything is in place |
+
 ## Things that are not byte-identical on another machine
 
 - `t00` writes coordinates that can differ in the 15th digit between
@@ -108,7 +128,7 @@ compares a machine's files with it).
   10⁻⁸ m; compare geometry, not checksums.
 - Earth Engine exports (1.1) depend on what Earth Engine serves on the day.
   Two 2021 Sentinel-2 dates were reprocessed between September and October
-  2026 (decision R3e). The image IDs and dates are recorded in
+  2026. The image IDs and dates are recorded in
   `EARTH_ENGINE_INPUTS.csv`.
 - QGIS writes into a GeoPackage when it opens one, which changes the checksum
   without changing the data. Close QGIS before `--verify`.

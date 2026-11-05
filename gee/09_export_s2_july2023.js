@@ -36,7 +36,7 @@
 //   scale 10, CRS EPSG:32644, Drive folder FYP_exports
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. New script, paste this whole file in
 //   3. Click Run
 //   4. READ THE CONSOLE FIRST. Three blocks print: the inventory of July

@@ -40,7 +40,7 @@
 // This script settles that in about two minutes.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. New script, paste this whole file in
 //   3. Click Run
 //   4. Copy the two text blocks out of the Console and keep them

@@ -16,7 +16,7 @@
 //   tables. Reasoning is written above each one. Change them if you disagree.
 //
 // HOW TO USE
-//   1. https://code.earthengine.google.com, project gbpuat-fyp-alaknanda
+//   1. https://code.earthengine.google.com, your own Earth Engine cloud project
 //   2. Paste this whole file in
 //   3. Click Run
 //   4. Read the Section B numbers in the Console
