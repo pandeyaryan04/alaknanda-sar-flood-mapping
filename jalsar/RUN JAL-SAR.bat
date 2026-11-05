@@ -5,7 +5,8 @@ rem gets the terrain strata for its orbit, runs the three models, and makes
 rem the bulletin and the web map. Settings are in jalsar.env.
 rem Needs the internet and Earth Engine ("earthengine authenticate" once).
 rem Run "RUN JAL-SAR CHECK DOWNLOAD.bat" once first: it tests the download.
-rem Takes about 15 to 40 minutes (estimate); a stopped download carries on.
+rem Takes about 6 to 9 minutes on a home connection (a run on 30 October took
+rem 5.7 minutes), longer on a slow one; a stopped download carries on.
 
 chcp 65001 >nul
 set PYTHONUTF8=1
