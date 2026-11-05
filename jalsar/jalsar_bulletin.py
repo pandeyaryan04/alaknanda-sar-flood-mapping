@@ -12,8 +12,8 @@ accuracy measured against the reference maps; how the map is made and its
 limits.
 
 The PDF is printed by Microsoft Edge in headless mode (it comes with Windows
-11, so nothing is installed) and the footer "Jal-SAR . Aryan Pandey .
-G. B. Pant University ... Page X of Y" is added with pypdf. Edge is found
+11, so nothing is installed) and the footer "Jal-SAR . G. B. Pant
+University ... Page X of Y" is added with pypdf. Edge is found
 on its own; to use another Chromium browser set JALSAR_BROWSER to its path.
 
 All wording lives in templates\bulletin.html.j2.
@@ -463,7 +463,7 @@ def add_footer(src, dst, left=gd.FOOTER):
     wr = PdfWriter(clone_from=str(src))
     for page, ov in zip(wr.pages, over.pages):
         page.merge_page(ov)
-    wr.add_metadata({"/Title": "Jal-SAR flood bulletin", "/Author": gd.AUTHOR,
+    wr.add_metadata({"/Title": "Jal-SAR flood bulletin",
                      "/Creator": f"Jal-SAR {gc.VERSION}"})
     with open(dst, "wb") as fh:
         wr.write(fh)
@@ -570,7 +570,7 @@ def selftest():
                 txt = rd.pages[0].extract_text() + rd.pages[-1].extract_text()
                 n = len(rd.pages)
                 text_ok = (f"Page 1 of {n}" in txt and f"Page {n} of {n}" in txt
-                           and "Aryan Pandey" in txt and "Jal-SAR" in txt)
+                           and "Pantnagar" in txt and "Jal-SAR" in txt)
         kept = make_bulletin(gp, evs[0]).get("kept") is True
     checks = [("HTML: wordmark, maroon, census, validation, roads, limits, pan and zoom", html_ok),
               ("summary area matches summary.json", nums_ok),

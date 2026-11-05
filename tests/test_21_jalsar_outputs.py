@@ -76,7 +76,7 @@ def test_footer_needs_no_browser(tmp_path):
         w.write(fh)
     n = gb.add_footer(src, tmp_path / "out.pdf")
     txt = PdfReader(str(tmp_path / "out.pdf")).pages[1].extract_text()
-    assert n == 2 and "Page 2 of 2" in txt and "Aryan Pandey" in txt
+    assert n == 2 and "Page 2 of 2" in txt and "Pantnagar" in txt
 
 
 def test_env_example_parses():

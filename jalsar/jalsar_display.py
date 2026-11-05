@@ -34,9 +34,8 @@ INK, MUTED, LINE, BG = "#1a2332", "#5b6570", "#d7dce2", "#f5f6f8"
 TRUST_COLOURS = {3: "#1f4e9c", 2: "#e08e0b", 1: "#c62828", 0: "#8a8a8a"}
 FAMILY_COLOURS = {"rf": "#2b7bba", "unet": "#7b3fa0", "terramind": "#138a7a"}
 AGREE_COLOURS = {1: "#fcd34d", 2: "#f97316", 3: "#7f1d1d"}
-AUTHOR = "Aryan Pandey"
 INSTITUTE = "G. B. Pant University of Agriculture and Technology, Pantnagar"
-FOOTER = f"Jal-SAR · {AUTHOR} · {INSTITUTE}"
+FOOTER = f"Jal-SAR · {INSTITUTE}"
 POOLED = "both reaches pooled"
 
 # Printed on every bulletin and on the web map.
