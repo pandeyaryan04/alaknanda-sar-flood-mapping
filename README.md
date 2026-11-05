@@ -126,7 +126,7 @@ not errors.
 | Sen1Floods11 | Bonafilia et al. (2020); its repository states no licence |
 | TerraMind-1.0-small weights | IBM and ESA, `huggingface.co/ibm-esa-geospatial/TerraMind-1.0-small`, Apache 2.0 |
 
-## Status, October 2026
+## Status, November 2026
 
 **Done (semester 1):** corridor and centreline; Sentinel-2 mosaics; the
 permanent-water mask; terrain strata for both events; the Otsu baselines;
@@ -151,8 +151,14 @@ gave different numbers, because GPU training is not exactly repeatable: the
 U-Net stayed within the range of its three seeds, and TerraMind with terrain
 scored below it. The Jal-SAR headline model is the U-Net on both laptops.
 
-**Jal-SAR:** maps, bulletins and the web map for six radar dates; two have a
-hand-drawn reference (see `jalsar/README.md`).
+**Jal-SAR:** maps, bulletins and the web map for seven radar dates (the six
+in `jalsar/README.md`, plus 31 August 2026); two have a hand-drawn reference.
+
+**Jal-SAR extensions:** done (November 2026). Hit rate, false alarm ratio and
+CSI for every map; SHAP for all three models; PCA of the inputs; exposure and
+a village vulnerability index; the GloFAS forecast watch and a rough forecast
+extent; a blind test on the Beas valley flood of July 2023; and forecast flood
+maps from machine learning. See the section "Jal-SAR extensions".
 
 **Semester 2:** hydraulic modelling (HEC-RAS) and landslide susceptibility.
 
