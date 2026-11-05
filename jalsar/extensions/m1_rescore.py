@@ -123,7 +123,7 @@ def main():
                                                           "csi_hi", "f1", "flood_pixels_truth",
                                                           "windows_with_flood", "tp", "fp", "fn")}})
 
-    lines = ["# Hit rate, false alarm ratio and CSI (Stage M1)", "",
+    lines = ["# Hit rate, false alarm ratio and CSI (extension M1)", "",
              "Hit rate (probability of detection) = TP / (TP + FN), the same as recall.",
              "False alarm ratio = FP / (TP + FP), that is 1 minus precision.",
              "Critical success index (CSI) = TP / (TP + FP + FN), the same as IoU.", "",

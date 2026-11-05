@@ -217,7 +217,7 @@ def main():
                          "threshold_valid": thr, "iou_valid_at_threshold": iou_v,
                          "sklearn_version": sklearn.__version__, "n_estimators": args.n_estimators,
                          "min_samples_leaf": args.min_samples_leaf, "seed": args.seed,
-                         "note": "Stage M6. Inputs: rf_features -> standardise -> PCA (first k)."})
+                         "note": "Extension M6. Inputs: rf_features -> standardise -> PCA (first k)."})
         for year in mc.YEARS:
             inp = mc.corridor_inputs(paths, year)
             prob = np.full(inp["valid"].shape, np.nan, "float32")
@@ -233,7 +233,7 @@ def main():
             cmd = [sys.executable, "04_stratified_metrics.py", "--pred", str(mdir / f"{fname}.tif"),
                    "--truth", f"data/reference_{year}.tif", "--strata", f"data/strata_{year}_v3",
                    "--windows", f"data/reference_windows_{year}/reference_windows.geojson",
-                   "--label", f"Stage M6, {name} {args.trainset}, {year}", "--out", str(tdir)]
+                   "--label", f"Extension M6, {name} {args.trainset}, {year}", "--out", str(tdir)]
             with open(tdir / "run_log.txt", "w", encoding="utf-8") as log:
                 rc = subprocess.run(cmd, cwd=CODE, stdout=log, stderr=subprocess.STDOUT).returncode
             res["corridor"][year] = {"flood_km2": diag["flood_km2"], "scored": rc == 0,

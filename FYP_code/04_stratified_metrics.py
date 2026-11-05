@@ -75,7 +75,7 @@ rest of the 23 September rule.
     merge, is kept below it in metrics_summary.md and in the CSV
     (column table = as_classified), so nothing is hidden.
 
-HIT RATE AND FALSE ALARM RATIO (added 21 October 2026, Stage M1, from a
+HIT RATE AND FALSE ALARM RATIO (added 21 October 2026, Jal-SAR extension M1, from a
 review suggestion). Hydrology papers score flood maps with three numbers:
   hit rate (probability of detection) = TP / (TP + FN), the same as recall;
   false alarm ratio                    = FP / (TP + FP), which is 1 - precision;
@@ -235,7 +235,7 @@ def score(wc, weights):
             r[f"{k}_lo"], r[f"{k}_hi"] = round(float(lo), 4), round(float(hi), 4)
         else:                       # undefined in most resamples: no interval
             r[f"{k}_lo"] = r[f"{k}_hi"] = float("nan")
-    # Stage M1: the same rule for hit rate and false alarm ratio. CSI is IoU,
+    # Extension M1: the same rule for hit rate and false alarm ratio. CSI is IoU,
     # so its interval is the IoU interval.
     for k, name in (("recall", "hit_rate"), ("far", "far")):
         v = bm[k][~np.isnan(bm[k])]

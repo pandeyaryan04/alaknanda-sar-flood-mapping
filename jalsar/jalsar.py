@@ -23,7 +23,7 @@ check-download
            05 Data (the downloader's acceptance test). Needs Earth Engine.
 events     List the events Jal-SAR knows and whether each is done.
 trustscores
-           Stage M2: score the headline map of each validated event inside
+           Extension M2: score the headline map of each validated event inside
            each trust class (hit rate, false alarm ratio, CSI) into
            06 Outputs\jalsar\trust_scores.json and .md. The web map and the
            bulletins show them; 'webmap' refreshes them first.

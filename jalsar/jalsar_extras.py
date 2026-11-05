@@ -170,7 +170,7 @@ def _ci(s, k, pct=False):
 
 
 def trust_scores_md(ts):
-    lines = ["# What each trust class means (Stage M2)", "",
+    lines = ["# What each trust class means (extension M2)", "",
              f"Headline model: {ts['headline_model']}. {ts['method']}.", "",
              "Hit rate: share of the real (hand-drawn) flood the map found. False alarm ratio: share "
              "of the map's flood calls that were wrong. CSI: one score that counts both misses and "

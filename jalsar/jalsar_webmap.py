@@ -241,7 +241,7 @@ def headline_text(h):
 
 
 def exposure_rows(x):
-    """Facts rows from an event's exposure.json (Stage M7), or []."""
+    """Facts rows from an event's exposure.json (extension M7), or []."""
     if not x:
         return []
     rows = []

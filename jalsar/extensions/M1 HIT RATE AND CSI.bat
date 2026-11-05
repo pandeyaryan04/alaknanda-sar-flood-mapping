@@ -12,7 +12,7 @@ if /i not "%CONDA_DEFAULT_ENV%"=="fyp" (
   echo  Open Anaconda Prompt, run conda activate fyp, then drag this file into that window again.
   goto :fail
 )
-findstr /c:"Stage M1" "%~dp0..\..\FYP_code\04_stratified_metrics.py" >nul
+findstr /c:"HIT RATE AND FALSE ALARM RATIO" "%~dp0..\..\FYP_code\04_stratified_metrics.py" >nul
 if errorlevel 1 (
   echo  PROBLEM: 04_stratified_metrics.py is still the old version (no hit rate columns).
   goto :fail
