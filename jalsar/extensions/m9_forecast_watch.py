@@ -9,7 +9,7 @@ dates, and the forecast picture for the Jal-SAR web map.
    --rule picks which pair sets the status (default rp: 2 and 5 year).
    One set per reanalysis version. Each forecast is compared with the
    set of the version that made it, by its issue day (m9_glofas_read.forecast_version):
-   5.0 from 15 July 2026, 4.0 from 26 July 2023. GloFAS 3.1 forecasts (before that)
+   4.0 from 26 July 2023 (5.0 once its forecasts are operational). GloFAS 3.1 forecasts (before that)
    have no reanalysis here and use --version (default 4.0), flagged in the report.
 2. Status of a day at a gauge, from the 51 forecasts (control and 50 members):
      warning  at least --p (default 50 %) of them above the upper threshold
@@ -442,8 +442,9 @@ def main():
     md = ["# M9: GloFAS forecast watch", "",
           f"Rule: **{args.rule}** ({lo_name} and {hi_name}), at least {args.p * 100:.0f} % of the 51 forecasts. "
           f"Reanalysis versions read: {read_txt}. "
-          "Each forecast is compared with the thresholds of the version that made it: GloFAS 5.0 from "
-          f"{gr.V5_FROM}, GloFAS 4.0 from {gr.V4_FROM}; GloFAS 3.1 forecasts before that have no reanalysis here and "
+          "Each forecast is compared with the thresholds of the version that made it: "
+          + (f"GloFAS 5.0 from {gr.V5_FROM}, " if gr.V5_FROM is not None else "")
+          + f"GloFAS 4.0 from {gr.V4_FROM}; GloFAS 3.1 forecasts before that have no reanalysis here and "
           f"use the {args.version} thresholds. Day convention: a 24 h value is stamped with the end of its day.", ""]
     f0 = lambda v: "n/a" if v is None or not np.isfinite(v) else f"{v:.0f}"  # noqa: E731
     for v, tt in thr_v.items():
@@ -485,7 +486,8 @@ def main():
         md += ["", "GloFAS 3.1 (0.1 degree; forecasts up to 25 July 2023) has no reanalysis here, so its rows of the "
                f"hindcast use the {vname(args.version)} thresholds, a different model version; read them with that in mind. "
                "The forecast files carry no version number: the version is set from the issue day and the "
-               "operational dates (GloFAS 5.0 from 15 July 2026, from the EWDS dataset page)."]
+               "operational dates. GloFAS 5.0 forecasts are not operational yet: the 15 July 2026 date on the "
+               "EWDS historical page is the 5.0 reanalysis, and the 2026 forecasts here match the 4.0 reanalysis."]
     md += ["", f"## Watch: forecast issued {issue} ({label})", "", ver_txt + ".", ""]
     for pt in points:
         md.append(f"- **{pt['name']}**: {pt['status']}. {pt['status_text']}")

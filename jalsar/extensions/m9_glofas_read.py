@@ -31,11 +31,15 @@ STAGE_CSV = GAUGES / "guardian" / "GAUGE_wse_clean.csv"
 DAY = np.timedelta64(1, "D")
 
 # Which GloFAS version made a forecast, so it is compared with its own version's thresholds.
-# The forecast files carry no version number,
-# so this goes by the operational dates. v5.0: "Operational version - GloFAS v5.0 released
-# 2026-07-15" (EWDS cems-glofas-historical overview page, read 25 Oct 2026). v4.0: from 26 July
-# 2023; before that GloFAS 3.1 (0.1 degree grid; the last 0.1 degree file here is 19 July 2023).
-V5_FROM = np.datetime64("2026-07-15", "D")
+# The forecast files carry no version number, so this goes by the operational dates.
+# v4.0: from 26 July 2023; before that GloFAS 3.1 (0.1 degree grid; the last 0.1 degree file
+# here is 19 July 2023).
+# v5.0: not operational for forecasts yet. The date "GloFAS v5.0 released 2026-07-15" on the EWDS
+# cems-glofas-historical page is the release of the 5.0 reanalysis; the CEMS notice of 16 July 2026
+# says the 5.0 forecasts come later, and the July to October 2026 forecasts here match the 4.0
+# reanalysis within a few per cent (checked 5 November 2026). Set V5_FROM to the first issue day
+# of the 5.0 forecasts once GloFAS announces them.
+V5_FROM = None
 V4_FROM = np.datetime64("2023-07-26", "D")
 HIST_VERSIONS = ("version_4_0", "version_5_0")
 VERSION_NAME = {"version_3_1": "GloFAS 3.1", "version_4_0": "GloFAS 4.0", "version_5_0": "GloFAS 5.0"}
@@ -44,7 +48,7 @@ VERSION_NAME = {"version_3_1": "GloFAS 3.1", "version_4_0": "GloFAS 4.0", "versi
 def forecast_version(issue):
     """The GloFAS version that made a forecast issued on this day."""
     issue = np.datetime64(issue, "D")
-    if issue >= V5_FROM:
+    if V5_FROM is not None and issue >= V5_FROM:
         return "version_5_0"
     if issue >= V4_FROM:
         return "version_4_0"
