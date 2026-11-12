@@ -4,12 +4,15 @@ jalsar_bulletin.py
 Jal-SAR's flood bulletin: for one event, an interactive HTML file and a
 PDF, with a dark maroon header.
 
-Contents: header (date, orbit, scene); cards; a plain-English summary; a map
-of the headline flood coloured by trust over a hillshade, with pan and zoom,
-and close-ups of the three places with the most mapped flood; flood area by
-reach and trust; model agreement; villages (searchable, paged); roads; the
-accuracy measured against the reference maps; how the map is made and its
-limits.
+Contents: header (date, orbit, scene); cards; a plain-English summary; how to
+read the bulletin; a map of the headline flood coloured by trust over a
+hillshade, with pan and zoom, switchable layers (each model, model agreement,
+village risk colours) and village details on a click, and close-ups of the
+three places with the most mapped flood; flood area by reach and trust; model
+agreement; the GloFAS river forecast for the days before the pass (M9);
+villages (searchable, paged, a click shows the village on the map) with a
+district summary; roads; the accuracy measured against the reference maps;
+how the map is made and its limits; a glossary.
 
 The PDF is printed by Microsoft Edge in headless mode (it comes with Windows
 11, so nothing is installed) and the footer "Jal-SAR . G. B. Pant
@@ -62,6 +65,11 @@ DIM_NAMES = {"incidence": "Local incidence angle", "hand": "Height above nearest
 REACH_ROWS = [(gd.POOLED, "Both reaches"),
               ("gorge_above_devprayag", "Gorge above Devprayag"),
               ("open_valley_below_devprayag", "Open valley below Devprayag")]
+MODEL_COLOURS = {"rf": "#7c3aed", "unet": "#0e7490", "terramind": "#be185d"}
+VILLAGE_PX = (3.0, 6.0)   # village dot radius on screen: 3 px plus up to 6 px by flood area
+PRINT_PX_WIDTH = 700      # the map's width on an A4 page, in CSS pixels
+FORECAST_STATUS = {"none": "below the 2-year flow", "watch": "watch (2-year flow)",
+                   "warning": "warning (5-year flow)", "": "no forecast"}
 EDGE_PATHS = [r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
               r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"]
 
@@ -189,16 +197,22 @@ def map_figure(gp, event, summ, flood, trust, prof):
     vill = []
     vrows = ((summ.get("villages") or {}).get("villages") or [])
     if vrows:
+        import jalsar_extras as gx
         xs, ys = wt("EPSG:4326", prof["crs"], [v["lon"] for v in vrows], [v["lat"] for v in vrows])
-        for v, x, y in zip(vrows, xs, ys):
-            vill.append({"x": round((x - t.c) / t.a, 1), "y": round((y - t.f) / t.e, 1),
-                         "r": round(stroke * (1.2 + 3 * min(math.sqrt(v["flood_km2"] / 0.1), 1)), 1),
-                         "name": v["village"], "sub": v["subdistrict"],
-                         "flood": f"{v['flood_km2']:.3f}",
-                         "share": f"{v['share_flooded'] * 100:.1f} %"
-                         if v.get("share_flooded") is not None else "n/a",
-                         "pop": gd.num(v["population_2011"], 0) if v["population_2011"] is not None
-                         else "no census figure"})
+        for i, (v, x, y) in enumerate(zip(vrows, xs, ys)):
+            px = VILLAGE_PX[0] + VILLAGE_PX[1] * min(math.sqrt(v["flood_km2"] / 0.1), 1)
+            risk = v.get("risk_class")
+            vill.append({"i": i, "x": round((x - t.c) / t.a, 1), "y": round((y - t.f) / t.e, 1),
+                         "px": round(px, 2), "r": round(0.55 * px * W / PRINT_PX_WIDTH, 1),
+                         "name": v["village"], "sub": v["subdistrict"], "district": v.get("district"),
+                         "block": v.get("block"), "flood": v["flood_km2"],
+                         "high": v.get("flood_high_trust_km2"), "share": v.get("share_flooded"),
+                         "vkm2": v.get("village_km2"), "wp_v": v.get("worldpop_village"),
+                         "wp_f": v.get("worldpop_in_flood"), "risk": risk,
+                         "vuln": v.get("vulnerability_name"), "vclass": v.get("vulnerability_class"), "expo": v.get("exposure_class"),
+                         "pop": v.get("population_2011"), "hh": v.get("households_2011"),
+                         "lat": v["lat"], "lon": v["lon"],
+                         "rcol": gx.RISK_COLOURS.get(risk, "#9ca3af") if risk else "#ffffff"})
     insets, boxes = [], []
     for key, (r0, c0) in zip("ABC", pick_insets(sp, (H, W))):
         sub = _crop(hb, r0, c0, INSET_PX, mc.NODATA)
@@ -223,14 +237,33 @@ def map_figure(gp, event, summ, flood, trust, prof):
                                             "image/jpeg")
         insets.append(item)
         boxes.append({"key": key, "x": c0, "y": r0, "w": INSET_PX, "h": INSET_PX})
+    d = gp.event_dir(event.id)
+    layers = []
+    for fam in summ.get("families", {}):
+        p = d / f"flood_{fam}.tif"
+        if p.exists():
+            a, _ = gd.read_u8(p)
+            layers.append({"id": f"m-{fam}", "name": f"{gc.FAMILY_NAMES.get(fam, fam)} only",
+                           "col": MODEL_COLOURS.get(fam, "#334155"),
+                           "png": gd.data_url(gd.palette_png(a, {1: gd.hex_rgba(MODEL_COLOURS.get(fam, "#334155"))}))})
+    agree = None
+    if (d / "agreement.tif").exists():
+        a, _ = gd.read_u8(d / "agreement.tif")
+        nf = len(summ.get("families", {}))
+        agree = gd.data_url(gd.palette_png(a, {k: gd.hex_rgba(gd.AGREE_COLOURS[k])
+                                                for k in range(1, nf + 1) if k in gd.AGREE_COLOURS}))
     fig = {"w": W, "h": H, "stroke": round(stroke, 2), "font": round(font, 1),
+           "cell_m": abs(t.a), "model_layers": layers, "agree": agree,
+           "agree_cols": {k: c for k, c in gd.AGREE_COLOURS.items() if k <= len(summ.get("families", {}))},
            "hillshade": gd.data_url(gd.jpeg(hs), "image/jpeg") if hs is not None else None,
            "flood": gd.data_url(gd.palette_png(hb, tcol)),
            "blind": gd.data_url(gd.palette_png(blind3, blind_col)),
            "corridor": corridor_path(gp, prof),
            "split_x": round(split_px, 1) if split_px is not None else None,
            "spots": [{"x": s["col"] * SPOT_PX + SPOT_PX / 2, "y": s["row"] * SPOT_PX + SPOT_PX / 2,
-                      "r": round(stroke * (1.5 + 6 * math.sqrt(s["km2"])), 1), "km2": s["km2"],
+                      "r": round(stroke * (1.5 + 6 * math.sqrt(s["km2"])), 1),
+                      "px": round(2.5 + 9 * min(math.sqrt(s["km2"]), 1), 2), "km2": s["km2"],
+                      "high_km2": s["high_km2"],
                       "trust": s["trust"], "col": s["col_hex"]} for s in sp],
            "villages": vill, "insets": boxes,
            "scale_km": scale_km if scale_km >= 1 else scale_km,
@@ -242,11 +275,119 @@ def map_figure(gp, event, summ, flood, trust, prof):
 # The bulletin's numbers
 # =============================================================================
 
+def forecast_rows(gp, event):
+    """What GloFAS forecast at the five gauges in the 14 days before this pass (M9 hindcast).
+
+    From 06 Outputs/jalsar/extensions/m9_forecast/hindcast.csv and thresholds.csv; None when
+    M9 has not run for this event. Each forecast is read with the thresholds of the version that
+    made it, as M9 does.
+    """
+    import csv
+    import re
+    m9 = gp.o06 / "jalsar" / "extensions" / "m9_forecast"
+    hp, tp = m9 / "hindcast.csv", m9 / "thresholds.csv"
+    if not hp.exists():
+        return None
+    with open(hp, encoding="utf-8") as fh:
+        rows = [r for r in csv.DictReader(fh) if r["event"] == event.id]
+    if not rows:
+        return None
+    thr = {}
+    if tp.exists():
+        with open(tp, encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                thr[(r["version"], r["station"])] = r
+
+    def fnum(x):
+        try:
+            return float(x)
+        except (TypeError, ValueError):
+            return None
+
+    out = []
+    for r in rows:
+        m = re.search(r"GloFAS (\d)\.(\d) thresholds", r.get("forecast_versions", ""))
+        ver = f"version_{m.group(1)}_{m.group(2)}" if m else "version_4_0"
+        t = thr.get((ver, r["station"]), {})
+        days = []
+        for k in range(14, -1, -1):
+            st = (r.get(f"ahead_{k}") or "").strip()
+            q = fnum(r.get(f"q50_ahead_{k}"))
+            days.append({"k": k, "status": st or "", "q": q,
+                         "label": FORECAST_STATUS.get(st, st or "no forecast")})
+        above = r.get("gauge_above_warning", "")
+        out.append({"station": r["station"], "versions": r.get("forecast_versions", ""),
+                    "rp2": fnum(t.get("rp2")), "rp5": fnum(t.get("rp5")),
+                    "thr_version": ver.replace("version_", "").replace("_", "."),
+                    "rean_q": fnum(r.get("reanalysis_q")),
+                    "rean_status": FORECAST_STATUS.get(r.get("reanalysis_status", ""), r.get("reanalysis_status", "")),
+                    "rean_version": r.get("reanalysis_version", "").replace("version_", "").replace("_", "."),
+                    "stage": fnum(r.get("gauge_stage_m")),
+                    "above": {"True": "yes", "False": "no"}.get(above, "no data"),
+                    "days": days,
+                    "watch_days": sum(d["status"] in ("watch", "warning") for d in days),
+                    "day1": days[-2]["status"] if len(days) > 1 else ""})
+    return out
+
+
+def district_rows(v, worldpop):
+    """Villages, people and flood area by district and sub-district, largest flood first."""
+    if not v or not v.get("villages"):
+        return []
+    groups = {}
+    for r in v["villages"]:
+        key = (r.get("district") or "unknown", r.get("subdistrict") or "unknown")
+        g = groups.setdefault(key, {"district": key[0], "sub": key[1], "n": 0, "flood": 0.0, "high": 0.0,
+                                    "wp_v": 0.0, "wp_f": 0.0, "pop": 0, "no_pop": 0, "risk_high": 0})
+        g["n"] += 1
+        g["flood"] += r.get("flood_km2") or 0
+        g["high"] += r.get("flood_high_trust_km2") or 0
+        g["wp_v"] += r.get("worldpop_village") or 0
+        g["wp_f"] += r.get("worldpop_in_flood") or 0
+        if r.get("population_2011") is None:
+            g["no_pop"] += 1
+        else:
+            g["pop"] += r["population_2011"]
+        g["risk_high"] += r.get("risk_class") == "high"
+    out = []
+    by_d = {}
+    for g in groups.values():
+        by_d.setdefault(g["district"], []).append(g)
+    for dname, subs in sorted(by_d.items(), key=lambda kv: -sum(g["flood"] for g in kv[1])):
+        tot = {"district": dname, "sub": "all sub-districts", "total": True}
+        for k in ("n", "flood", "high", "wp_v", "wp_f", "pop", "no_pop", "risk_high"):
+            tot[k] = sum(g[k] for g in subs)
+        out.append(tot)
+        for g in sorted(subs, key=lambda g: -g["flood"]):
+            g["total"] = False
+            out.append(g)
+    for g in out:
+        g["flood_t"], g["high_t"] = gd.num(g["flood"]), gd.num(g["high"])
+        g["wp_v_t"] = gd.num(g["wp_v"], 0) if worldpop else "n/a"
+        g["wp_f_t"] = gd.num(g["wp_f"], 0) if worldpop else "n/a"
+        g["pop_t"] = gd.num(g["pop"], 0)
+    return out
+
+
 def context(gp, event, summ, print_mode=False):
+    import jalsar_extras as gx
     s = gd.clean(summ)
     d = gp.event_dir(event.id)
     flood, prof = gd.read_u8(d / "flood_headline.tif")
     trust, _ = gd.read_u8(d / "trust.tif")
+    # WorldPop people per village from m8_risk_view.py, when it has run; the table then shows
+    # WorldPop as the main number and Census 2011 goes to the village CSV only. Merged before
+    # the map is drawn so a village's details on the map carry the same numbers as the table.
+    vp = gx.village_people(gp, event)
+    if s.get("villages") and vp:
+        for row in s["villages"].get("villages", []):
+            x = (vp.get("villages") or {}).get(str(row.get("vlcode", "")))
+            row["worldpop_village"] = x.get("worldpop_village") if x else None
+            row["worldpop_in_flood"] = x.get("worldpop_in_flood") if x else None
+            row["risk_class"] = x.get("risk_class") if x else None
+            row["vulnerability_name"] = x.get("vulnerability_name") if x else None
+            row["exposure_class"] = x.get("exposure_class") if x else None
+            row["vulnerability_class"] = x.get("vulnerability_class") if x else None
     fig, insets = map_figure(gp, event, s, flood, trust, prof)
     a = s["areas"]
     head = s["headline"]
@@ -317,17 +458,6 @@ def context(gp, event, summ, print_mode=False):
     def pooled(key):
         return gd.f1_text(((val or {}).get(key, {}).get(fam) or {}).get(gd.POOLED))
 
-    import jalsar_extras as gx
-    # WorldPop people per village from m8_risk_view.py, when it has run; the table then shows
-    # WorldPop as the main number and Census 2011 goes to the village CSV only.
-    vp = gx.village_people(gp, event)
-    if v and vp:
-        for row in v.get("villages", []):
-            x = (vp.get("villages") or {}).get(str(row.get("vlcode", "")))
-            row["worldpop_village"] = x.get("worldpop_village") if x else None
-            row["worldpop_in_flood"] = x.get("worldpop_in_flood") if x else None
-            row["risk_class"] = x.get("risk_class") if x else None
-            row["vulnerability_name"] = x.get("vulnerability_name") if x else None
     # the short exposure table (people, buildings, roads, lines, poles, towers, with sources),
     # from M7's exposure.json and the road length
     xs, _ = gx.exposure(gp, event)
@@ -383,6 +513,10 @@ def context(gp, event, summ, print_mode=False):
             "trust_rows": trust_rows, "trust_basis": trust_basis, "trust_plain": gd.TRUST_PLAIN,
             "trust_scores": ts, "ts_rows": ts_rows, "ts_high": ts_plain.get("high", ""),
             "not_this": gd.NOT_THIS,
+            "forecast": forecast_rows(gp, event), "forecast_cols": gx.FORECAST_COLOURS,
+            "districts": district_rows(v, bool(vp)),
+            "village_json": gd.to_json(fig["villages"]),
+            "model_colours": MODEL_COLOURS,
             "credits": gd.CREDITS, "footer": gd.FOOTER, "files": s.get("files", [])}
 
 

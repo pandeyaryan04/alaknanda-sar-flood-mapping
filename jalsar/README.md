@@ -14,13 +14,13 @@ The first two images are the web map and the last three are the bulletin, both f
 
 *Web map, agreement layer on: how many of the three models call each cell flood.*
 
-![Bulletin, page 1](screenshots/3_bulletin_page1.png)
+![Bulletin, top of the page](screenshots/3_bulletin_page1.png)
 
-*Bulletin, page 1: summary and headline figures.*
+*Bulletin, top of the page: headline figures and the summary.*
 
-![Bulletin, village table](screenshots/4_bulletin_villages.png)
+![Bulletin, village details on the map](screenshots/4_bulletin_villages.png)
 
-*Bulletin, villages with mapped flood, largest flood area first.*
+*Bulletin map zoomed in: a click on a village dot shows its details.*
 
 ![Bulletin, accuracy section](screenshots/5_bulletin_accuracy.png)
 
@@ -34,7 +34,7 @@ For one date, Jal-SAR writes to `06 Outputs\jalsar\<date>_orbit<nn>\`:
 - an agreement map, showing how many of the three models call each cell flood;
 - a headline map, from the model chosen by the rule below;
 - a trust layer, which colours flooded cells by how often that terrain type was right in the test;
-- a bulletin, as an HTML page and a PDF: flooded area, villages touching the flood, flooded road length, and the accuracy measured on the corridor;
+- a bulletin, as an HTML page and a PDF: flooded area, villages touching the flood (with a district summary and details for each village), flooded road length, the GloFAS river forecast for the days before the pass, and the accuracy measured on the corridor. In the HTML page the map can be zoomed to 10 m, each model's map and the model agreement can be switched on, and a glossary explains the terms;
 - a web map, one HTML page that holds every event and layer.
 
 ## What it is not
