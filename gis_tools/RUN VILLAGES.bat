@@ -7,7 +7,7 @@ set "KMZ=%DATA%\vb_soi_uk.kmz"
 set "COR=%PROJ%\04 Code\FYP_code\data\corridor.geojson"
 
 echo.
-echo gis_tools: village boundaries from the Survey of India KMZ
+echo gis_tools: village boundaries from the Geological Survey of India KMZ
 echo.
 echo This has already been run once and its outputs are in
 echo   05 Data\boundaries\VILLAGES_corridor.gpkg  .geojson  .csv
