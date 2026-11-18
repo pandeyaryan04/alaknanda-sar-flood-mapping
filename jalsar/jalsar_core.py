@@ -430,7 +430,7 @@ def village_exposure(gp, flood, trust, profile, km2, min_km2=VILLAGE_MIN_KM2):
     """Villages whose polygon contains mapped flood, most flood area first.
 
     share_flooded is the mapped flood over the area of the WHOLE village polygon
-    (Survey of India), not over the part of the village inside the corridor
+    (Geological Survey of India), not over the part of the village inside the corridor
     (9 October): a village that only grazes the corridor no longer looks
     mostly flooded. Two counts are given: every village touching the flood,
     and those with at least min_km2 of mapped flood (1 ha by default).
@@ -483,7 +483,7 @@ def village_exposure(gp, flood, trust, profile, km2, min_km2=VILLAGE_MIN_KM2):
             "population_min_area": int(sum(r["population_2011"] or 0 for r in big)),
             "households_min_area": int(sum(r["households_2011"] or 0 for r in big)),
             "share_basis": "mapped flood over the area of the whole village polygon",
-            "source": "Survey of India village boundaries with Census 2011 figures "
+            "source": "Geological Survey of India village boundaries with Census 2011 figures "
                       "(VILLAGES_corridor.gpkg)"}
 
 

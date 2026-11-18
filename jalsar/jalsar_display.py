@@ -68,7 +68,7 @@ TRUST_PLAIN = {
     0: "radar blind: the slope is in radar layover or shadow, so no flood can be mapped there",
 }
 CREDITS = ("Contains modified Copernicus Sentinel data, processed in Google Earth Engine. "
-           "Village boundaries: Survey of India. Households and population: Census of India "
+           "Village boundaries: Geological Survey of India. Households and population: Census of India "
            "2011. Roads © OpenStreetMap contributors (ODbL). Terrain: Copernicus GLO-30 DEM.")
 
 

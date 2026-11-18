@@ -7,7 +7,7 @@
 // WHY
 // ---
 // The Sentinel-1 timing inventory came back and it changed the question.
-// Only two relative orbits cover this corridor, 63 descending at 00:44 UTC and
+// Only two relative orbits cover this corridor, 63 descending at 00:43 UTC and
 // 129 ascending at 12:47 UTC, and both give 100 per cent coverage. So the
 // choice of acquisition is not free: it is whatever those two orbits happen to
 // offer near a rainfall peak.

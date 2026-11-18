@@ -8,7 +8,7 @@ averaged figure.
 
 Final year B.Tech Civil Engineering project, G. B. Pant University of
 Agriculture and Technology, Pantnagar. Work in progress (semester 1 of 2,
-October 2026).
+November 2026).
 
 ---
 
@@ -122,7 +122,7 @@ not errors.
 | CHIRPS daily rainfall; IMD gridded rainfall | Google Earth Engine; India Meteorological Department via `imdlib` |
 | River water level | GUARDIAN (Patidar, Indu and Karmakar, 2024, *Scientific Data* 11, 1155) |
 | Landslide polygons | National Geoscience Data Repository (geodataindia.gov.in) |
-| Village boundaries | Survey of India, via the National Water Data Portal |
+| Village boundaries | National Water Data Portal (National Water Informatics Centre); producer listed as Geological Survey of India |
 | Sen1Floods11 | Bonafilia et al. (2020); its repository states no licence |
 | TerraMind-1.0-small weights | IBM and ESA, `huggingface.co/ibm-esa-geospatial/TerraMind-1.0-small`, Apache 2.0 |
 

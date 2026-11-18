@@ -1,5 +1,5 @@
 """
-t08_villages.py  --  turn the Survey of India village boundary KMZ into a
+t08_villages.py  --  turn the Geological Survey of India village boundary KMZ into a
 usable vector layer, and cut it to the corridor.
 
 Written 9 September 2026, after vb_soi_uk.kmz was downloaded.
@@ -351,7 +351,7 @@ def main(argv=None):
 
     rep = os.path.join(a.out, "VILLAGES_report.md")
     with open(rep, "w", encoding="utf-8") as f:
-        f.write("# Village boundaries, Survey of India, Uttarakhand\n\n")
+        f.write("# Village boundaries, Geological Survey of India, Uttarakhand\n\n")
         f.write("Source file: `%s`\n\n" % os.path.basename(a.kmz))
         f.write("Read %d village polygons across %d districts. "
                 "%d of them meet the corridor.\n\n"

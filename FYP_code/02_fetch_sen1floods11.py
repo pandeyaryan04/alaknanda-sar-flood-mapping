@@ -97,7 +97,7 @@ The radar pre-training set, about 6.8 GB:
 Check for gaps without downloading:
     python 02_fetch_sen1floods11.py --get weak --verify
 
-ALREADY RUN, 25 August 2026: --get all completed. 19,654 files, 32.4 GB, zero
+ALREADY RUN, 25 August 2026: --get all completed. 19,771 files, 32.4 GiB, zero
 failures, every file checked against the bucket's own byte count. Nothing to do
 here unless a file gets deleted, in which case re-run the same command and only
 the gaps are fetched.

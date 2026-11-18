@@ -448,7 +448,7 @@ def main():
           "Day convention: a GloFAS 24 h value is stamped with the end of its day.", "",
           "## 1-2. Gauge cells and stage relations (stage = h0 + a * Q^b)", "",
           "One table per reanalysis version, same gauge cells. The forecast watch (M9) uses the table of the "
-          "version that made each forecast: 4.0 for forecasts from 26 July 2023, 5.0 from 15 July 2026.", ""]
+          "version that made each forecast: 4.0 for forecasts from 26 July 2023, 2026 included (5.0 forecasts are not operational yet).", ""]
     for v, rv in rating_by_version.items():
         md += [f"### {vname(v)} reanalysis ({v}){' (calibration version)' if v == args.version else ''}", "",
                "| Gauge | GloFAS cell | How chosen | Mean Q m3/s | Fit R2 (Q a day earlier / same day / a day later) | RMSE m | Q at warning stage | Q at danger stage |",

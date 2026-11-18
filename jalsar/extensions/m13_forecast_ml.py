@@ -8,7 +8,7 @@ after it, so they cannot forecast. These models take no radar at all. For each 1
     DIST    distance to the permanent river (JRC plus dry-season Sentinel-2 water), m
     REACH   1 in the gorge above Devprayag, 0 in the open valley below
     QREL    GloFAS river flow at the reach's gauge divided by that gauge's 2-year flow
-            (both from the same GloFAS version, so the 4.0 and 5.0 flows can be compared)
+            (both from the same GloFAS version; every flow used is read against version 4.0)
 
 and say whether the cell is flooded. QREL is the only input that changes from one flood to the
 next, so a forecast flow gives a forecast map.

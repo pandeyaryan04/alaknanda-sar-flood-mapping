@@ -79,7 +79,7 @@ Earth Engine needs a login: run `earthengine authenticate` once in the `fyp` env
 | October 2021 | 21 Oct 2021 | 63, descending | yes | validated |
 | July 2023 | 19 Jul 2023 | 63, descending | no | radar only, no reference |
 | August 2023 | 16 Aug 2023 | 129, ascending | yes | validated; primary event |
-| August 2025 | 29 Aug 2025 | 129, ascending | no | radar only; whether a flood happened on this date is unverified |
+| August 2025 | 29 Aug 2025 | 129, ascending | no | radar only; a flood confirmed by news reports, not by a reference map |
 | August 2026 (31 July request) | 3 Aug 2026 | 63, descending | no | radar only; Sentinel-1D |
 | August 2026 (6 August request) | 7 Aug 2026 | 129, ascending | no | radar only; Sentinel-1D |
 

@@ -347,7 +347,7 @@ tr,.card,.inset,.mapbox,.about{break-inside:avoid}
 </table>
 <div class="pager" id="vt-pager"><button type="button" onclick="gjPage('vt',-1)">Previous</button><span id="vt-page"></span><button type="button" onclick="gjPage('vt',1)">Next</button></div>
 {% elif b.villages and b.villages.villages %}
-<p class="note">Villages whose area includes mapped flood, largest flood area first. "Share in flood" is the mapped flood as a share of the whole village area. "Inside or touching the mapped flood" does not mean damaged. Households and population are from the 2011 Census (Survey of India village boundaries); a village without a census figure says so, and is never counted as zero.</p>
+<p class="note">Villages whose area includes mapped flood, largest flood area first. "Share in flood" is the mapped flood as a share of the whole village area. "Inside or touching the mapped flood" does not mean damaged. Households and population are from the 2011 Census (Geological Survey of India village boundaries); a village without a census figure says so, and is never counted as zero.</p>
 <div class="tools"><label for="vq">Search</label><input id="vq" type="search" placeholder="village, block or district" oninput="gjPage('vt',0)"><span id="vt-count"></span></div>
 <table id="vt">
   <thead><tr><th>Village</th><th>Sub-district</th><th>District</th><th class="r">Households (2011)</th><th class="r">Population (2011)</th><th class="r">Share in flood</th><th class="r">Flood (km&sup2;)</th><th class="r">of it high trust</th>{% if not b.print_mode %}<th class="btn"></th>{% endif %}</tr></thead>
