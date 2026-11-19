@@ -11,7 +11,6 @@ The manifest goes into the code repository; the data itself does not.
 What it covers (paths relative to the project folder):
   05 Data\                                  every source dataset and derived layer
                                             (not 05 Data\00 Notes, which are documents)
-  00 New work\Digitising handoff\received\  the original hand-drawn returns
   06 Outputs\gis_tools\qgis\                the reference GeoPackages in use
   06 Outputs\tables\                        the scored baseline tables
   04 Code\FYP_code\data\                    Sen1Floods11, terrain, strata, flood maps,
@@ -48,7 +47,6 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "04 Code" / "provenance" / "DATA_MANIFEST.csv"
 COVER = [
     "05 Data",
-    "00 New work/Digitising handoff/received",
     "06 Outputs/gis_tools/qgis",
     "06 Outputs/tables",
     "04 Code/FYP_code/data",

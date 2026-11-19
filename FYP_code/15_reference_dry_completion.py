@@ -6,7 +6,7 @@ the February (dry) layer completed by rule, decided on 7 October 2026 after
 the quality check of the returned drawings.
 
 Reads the original drawings, untouched, straight from the RETURN zips in
-  00 New work\Digitising handoff\received\
+  05 Data\reference_maps\hand_drawn\
 and writes two GeoPackages:
 
   QA_dry_water_not_drawn_<year>.gpkg              layer dry_water_not_drawn
@@ -77,7 +77,7 @@ except ImportError as e:
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "05 Data"
-RECEIVED = ROOT / "00 New work" / "Digitising handoff" / "received"
+RECEIVED = DATA / "reference_maps" / "hand_drawn"
 ZIPS = {"2021": RECEIVED / "RETURN_2021_reference_drawing.zip",
         "2023": RECEIVED / "RETURN_2023_reference_drawing.zip"}
 WINDOWS = ROOT / "04 Code" / "FYP_code" / "data" / "reference_windows_{y}" / "reference_windows.geojson"

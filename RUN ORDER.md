@@ -33,7 +33,7 @@ compares a machine's files with it).
 | 1.4 | IMD rainfall; HMA 8 m DEM | `gis_tools\RUN DOWNLOADS.bat` (`t07_download.py imd`, `t07_download.py earthdata --short-name HMA_DEM8m_MOS --download`) | `05 Data\rainfall\imd\`, `dem\hma8m\` |
 | 1.5 | Sentinel-1 RTC, two scenes | ASF HyP3 On Demand (job `fyp-rtc`); zips into `05 Data\sentinel1_rtc\` | |
 | 1.6 | By hand from portals: CartoDEM tiles, LULC 50K, village boundaries, landslide polygons, GUARDIAN gauges, India-WRIS station pages, GADM, atlases | register, Part 1, rows 7, 8, 13, 19 to 27 | `05 Data\` |
-| 1.7 | The hand-drawn reference | drawn in QGIS on the Sentinel-2 images (digitising guide in `docs\REFERENCE - how to digitise.md`); returned as `00 New work\Digitising handoff\received\RETURN_*.zip`, kept untouched | |
+| 1.7 | The hand-drawn reference | drawn in QGIS on the Sentinel-2 images (digitising guide in `docs\REFERENCE - how to digitise.md`); returned as `RETURN_*.zip`, kept untouched in `05 Data\reference_maps\hand_drawn\` | |
 | 1.8 | TerraMind-1.0-small weights, `TerraMind_v1_small.pt` (504 MB, Apache 2.0) | by hand from `huggingface.co/ibm-esa-geospatial/TerraMind-1.0-small`; never downloaded by the code; its SHA-256 is in every TerraMind run record | `FYP_code\data\weights\` |
 
 ## 2. The corridor and the river
